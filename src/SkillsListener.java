@@ -51,7 +51,7 @@ public class SkillsListener extends PluginListener {
 		if(skill < 0)
 			return false;
 		
-		int tool = Props.GetToolLevel(player.getItemInHand());
+		int tool = Props.GetToolLevel(player.getItemInHand(),skill);
 		int durability = Props.GetDurability(block);
 
 		player.sendMessage("Skill -" + Integer.toString(sp.getLevel(skill)) + "Tool -" + Integer.toString(tool) + "Dura +" + Integer.toString(durability));

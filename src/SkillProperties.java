@@ -161,12 +161,11 @@ public class SkillProperties {
 		return this.DestroySkill[block.getType()];
 	
 	}
-	public int GetToolLevel(int ItemInHand)
+	public int GetToolLevel(int ItemInHand,int skill)
 	{
 		if(ItemInHand == -1)
 			return this.BaseToolSkill;
-		int skill = this.Tools[ItemInHand];
-		if ( skill == -1 )
+		if ( skill != this.Tools[ItemInHand] )
 			return this.BaseToolSkill;
 		else
 			return this.ToolLevels[ItemInHand];

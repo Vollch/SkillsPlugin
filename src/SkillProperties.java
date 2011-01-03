@@ -35,6 +35,7 @@ public class SkillProperties {
 
 		if(!this.LoadConfig())
 		{
+
 			Skills = new String[0];
 			Rang = new String[0];
 			Exp = new int[1];
@@ -162,6 +163,8 @@ public class SkillProperties {
 	}
 	public int GetToolLevel(int ItemInHand)
 	{
+		if(ItemInHand == -1)
+			return this.BaseToolSkill;
 		int skill = this.Tools[ItemInHand];
 		if ( skill == -1 )
 			return this.BaseToolSkill;

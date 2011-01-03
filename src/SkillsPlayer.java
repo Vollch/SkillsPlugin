@@ -9,7 +9,7 @@ public class SkillsPlayer {
 		this.player = player;
 		String[] s = skills.split(":");
 	    for(int i = 0; i < s.length; i++){
-	    	this.skillExp[i+1] = Integer.parseInt(s[i]);
+	    	this.skillExp[i] = Integer.parseInt(s[i]);
 	    }
 	}
 	public SkillsPlayer(SkillsListener parent, Player player)

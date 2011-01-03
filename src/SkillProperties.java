@@ -12,13 +12,11 @@ public class SkillProperties {
 	public String[] Skills;
 	public String[] Rang;
 	public int[] Exp;
-	public int[] Tools = new int[400];
-	public int[] ToolLevels = new int[400];
+	public int[][] Tools;
 	
 	public int basedurability;
 	public int tobroke;
 	public int savetimer;
-	int BaseToolSkill = 0;
 	
 	public SkillProperties()
 	{
@@ -27,19 +25,15 @@ public class SkillProperties {
 			this.DestroySkill[i] = -1;
 			this.CreateSkill[i] = -1;
 		}
-		for (int i = 0; i < 400;i++)
-		{
-			this.Tools[i] = -1;
-			this.ToolLevels[i] = 0;
-		}
 
 		if(!this.LoadConfig())
 		{
 
-			Skills = new String[0];
-			Rang = new String[0];
-			Exp = new int[1];
-			Exp[0] = 50000;
+			this.Skills = new String[0];
+			this.Rang = new String[0];
+			this.Exp = new int[1];
+			this.Exp[0] = 50000;
+			this.Tools = new int[0][0];
 			this.DefaultConfig();
 		}
 		
@@ -56,7 +50,6 @@ public class SkillProperties {
 			this.basedurability = props.getInt("base-durability", 1);
 	        this.tobroke = props.getInt("to-broke", 5);
 	        this.savetimer = props.getInt("save-timer", 30000);
-	        this.BaseToolSkill = props.getInt("base-toolskill", 0);
 	        
 	        if(!props.containsKey("Durability"))
 	        	return false;
@@ -89,6 +82,7 @@ public class SkillProperties {
 	        	return false;
 	        temp = props.getString("SkillNames").split(",");
 	        Skills = new String[temp.length];
+	        Tools = new int[temp.length][400];
 	        for(int i=0;i < temp.length;i++)
 	        {
 	        	Skills[i]=temp[i];
@@ -110,8 +104,8 @@ public class SkillProperties {
 	        		for(String str: temp)
 	        		{
 	    	        	String[] temp2 = str.split("-");
-	    	        	this.Tools[Integer.parseInt(temp2[0])] = i;
-	    	        	this.ToolLevels[Integer.parseInt(temp2[0])] = Integer.parseInt(temp2[1]);
+	    	        	this.Tools[i][Integer.parseInt(temp2[0])] = Integer.parseInt(temp2[1]);
+
 	    	        	
 	        		}
 	        	}
@@ -147,7 +141,6 @@ public class SkillProperties {
 			props.setInt("base-durability", 1);
 			props.setInt("to-broke", 5);
 			props.setInt("save-timer", 30000);
-			props.setInt("base-toolskill", 0);
 			props.save();
 
 		}catch(IOException ioe){}
@@ -164,11 +157,8 @@ public class SkillProperties {
 	public int GetToolLevel(int ItemInHand,int skill)
 	{
 		if(ItemInHand == -1)
-			return this.BaseToolSkill;
-		if ( skill != this.Tools[ItemInHand] )
-			return this.BaseToolSkill;
-		else
-			return this.ToolLevels[ItemInHand];
+			return 0;
+		return this.Tools[skill][ItemInHand];
 	
 	}
 	public int GetDurability(Block block)

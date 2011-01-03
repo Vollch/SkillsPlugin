@@ -16,7 +16,7 @@ public class SkillsPlayer {
 	{
 		this.parent = parent;
 		this.player = player;
-		for(int i = 1; i <= this.parent.skillsCount; i++){
+		for(int i = 0; i < this.parent.Props.Skills.length; i++){
 			this.skillExp[i] = 0;
 		}
 	}
@@ -27,12 +27,7 @@ public class SkillsPlayer {
 	
 	public int getLevel(int skill)
 	{
-		for(int i = 15; i > 0; i--){
-			if(this.skillExp[skill] >= this.parent.exp[i]){
-				return i;
-			}
-		}
-		return 1;
+		return this.parent.Props.GetLevelFromExp(this.skillExp[skill]);
 	}
 	
 	public int getExp(int skill)
@@ -45,7 +40,7 @@ public class SkillsPlayer {
 		int before = this.getLevel(skill);
 		this.skillExp[skill] += value;
 		if(this.getLevel(skill) > before){
-			this.player.sendMessage("Congratulations! You are "+this.parent.rang[this.getLevel(skill)]+" "+this.parent.skills[skill]+"!");
+			this.player.sendMessage("Congratulations! You are "+this.parent.Props.Rang[this.getLevel(skill)]+" "+this.parent.Props.Skills[skill]+"!");
 		}
 	}
 }

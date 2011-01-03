@@ -1,7 +1,7 @@
 import java.io.IOException;
+import java.util.Enumeration;
 import java.util.TimerTask;
 import java.util.logging.Logger;
-
 
 public class SkillsTimer extends TimerTask{
 	static final Logger log = Logger.getLogger("Minecraft");
@@ -14,19 +14,21 @@ public class SkillsTimer extends TimerTask{
 	
 	public void run(){
 		try {
-			parent.players = new PropertiesFile("Skills.txt");
-			parent.players.load();
-			for (SkillsPlayer sp : parent.playerList){
+			this.parent.playersFile = new PropertiesFile("Skills.txt");
+			this.parent.playersFile.load();
+			Enumeration<Player> keys = this.parent.playersList.keys();
+			while(keys.hasMoreElements()){
+				SkillsPlayer sp = this.parent.playersList.get(keys.nextElement());
 				String skills = "";
-				for(int i = 1; i <= this.parent.skills_count; i++){
+				for(int i = 1; i <= this.parent.skillsCount; i++){
 					if(i > 1){
 						skills = skills + ":";
 					}
 					skills = skills+String.valueOf(sp.getExp(i));
 				}
-				parent.players.setString(sp.getName(), skills);
+				parent.playersFile.setString(sp.getName(), skills);
 			}
-			parent.players.save();
+			parent.playersFile.save();
 		} catch (IOException ioe) {}
 	}
 }

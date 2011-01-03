@@ -1,13 +1,15 @@
 import java.io.IOException;
-import java.util.ArrayList;
+import java.util.Hashtable;
 import java.util.Timer;
 import java.util.logging.Logger;
 
+
+
 public class SkillsListener extends PluginListener {
 	static final Logger log = Logger.getLogger("Minecraft");
-	public PropertiesFile properties;
-	public PropertiesFile players;
-	public ArrayList<SkillsPlayer> playerList = new ArrayList<SkillsPlayer>();
+	public PropertiesFile propertiesFile;
+	public PropertiesFile playersFile;
+	public Hashtable<Player, SkillsPlayer> playersList = new Hashtable<Player, SkillsPlayer>();
 	public Timer timer;
 	
 	public int[] type2skill = new int[200];
@@ -18,7 +20,7 @@ public class SkillsListener extends PluginListener {
 	public int[][] tools = new int[20][300];
 
 	
-	public int skills_count;
+	public int skillsCount;
 	
 	int basedurability;
 	int tobroke;
@@ -28,20 +30,20 @@ public class SkillsListener extends PluginListener {
 		int index = 0;
 		int skill = 0;
 	    try {
-		    this.properties = new PropertiesFile("Skills.properties");
-		    this.properties.load();
-	        this.basedurability = this.properties.getInt("base-durability", 1);
-	        this.tobroke = this.properties.getInt("to-broke", 5);
-	        this.savetimer = this.properties.getInt("save-timer", 30000);
+		    this.propertiesFile = new PropertiesFile("Skills.properties");
+		    this.propertiesFile.load();
+	        this.basedurability = this.propertiesFile.getInt("base-durability", 1);
+	        this.tobroke = this.propertiesFile.getInt("to-broke", 5);
+	        this.savetimer = this.propertiesFile.getInt("save-timer", 30000);
 	        for(int i = 1; i <= 20;i++){
-	        	if(!this.properties.containsKey("Skill"+String.valueOf(i))){
+	        	if(!this.propertiesFile.containsKey("Skill"+String.valueOf(i))){
 	        		break;
 	        	}
-	        	String[] s = this.properties.getString("Skill"+String.valueOf(i)).split(":");
+	        	String[] s = this.propertiesFile.getString("Skill"+String.valueOf(i)).split(":");
 	        	for(int ii = 1; ii <= 20; ii++){
 	        		if(this.skills[ii] == null){
 	        			this.skills[ii] = s[0];
-	        			this.skills_count = ii;
+	        			this.skillsCount = ii;
 	        			skill = ii;
 	        			break;
 	        		}
@@ -54,22 +56,22 @@ public class SkillsListener extends PluginListener {
 	        		index = Integer.parseInt(s[ii]) + Integer.parseInt(s[1]);
 	        		this.type2skill[index] = skill;
 	        	}
-	        	if(this.properties.containsKey("Tools"+String.valueOf(i))){
-	        		String[] ss = this.properties.getString("Tools"+String.valueOf(i)).split(":");
+	        	if(this.propertiesFile.containsKey("Tools"+String.valueOf(i))){
+	        		String[] ss = this.propertiesFile.getString("Tools"+String.valueOf(i)).split(":");
 	        		for(int ii = 0; ii < ss.length; ii+=2){
 	        			this.tools[skill][Integer.parseInt(ss[ii])] = Integer.parseInt(ss[ii+1]); 
 	        		}
 	        	}
 	        }
-	        String[] s2 = this.properties.getString("Durability").split(":");
+	        String[] s2 = this.propertiesFile.getString("Durability").split(":");
 	        for(int i = 0; i < s2.length; i+=2){
 	        	this.durability[Integer.parseInt(s2[i])] = Integer.parseInt(s2[i+1]);
 	        }
-	        String[] s3 = this.properties.getString("Rang").split(":");
+	        String[] s3 = this.propertiesFile.getString("Rang").split(":");
 	        for(int i = 0; i < s3.length; i++){
 	        	this.rang[i+1] = s3[i];
 	        }
-	        String[] s4 = this.properties.getString("Exp").split(":");
+	        String[] s4 = this.propertiesFile.getString("Exp").split(":");
 	        for(int i = 0; i < s4.length; i++){
 	        	this.exp[i+1] = Integer.parseInt(s4[i]);
 	        }
@@ -79,30 +81,28 @@ public class SkillsListener extends PluginListener {
 	}
 	
 	public void onLogin(Player player) {
-		for (SkillsPlayer sp : playerList){
-			if(player.getName().equals(sp.getName())){
-				return;
-			}	
+		if(this.playersList.containsKey(player)){
+			return;
 		}
 	    try {
-	    	this.players = new PropertiesFile("Skills.txt");
-			this.players.load();
-			if(this.players.containsKey(player.getName())){
-				String skills = this.players.getString(player.getName());
-				playerList.add(new SkillsPlayer(this, player, skills));
+	    	this.playersFile = new PropertiesFile("Skills.txt");
+			this.playersFile.load();
+			if(this.playersFile.containsKey(player.getName())){
+				String skills = this.playersFile.getString(player.getName());
+				this.playersList.put(player, new SkillsPlayer(this, player, skills));
 			}
 			else
 			{
-				playerList.add(new SkillsPlayer(this, player));
+				this.playersList.put(player, new SkillsPlayer(this, player));
 			} 
 		} catch (IOException ioe) {}
 	}
 	
 	public boolean onBlockBreak(Player player, Block block) {
 		int durability = block.getData();
-		SkillsPlayer sp = null;
-		int skill = 0;
+		SkillsPlayer sp = this.playersList.get(player);
 		
+		int skill = 0;
 		if(this.type2skill[block.getType()] > 0){
 			skill = this.type2skill[block.getType()];
 		}
@@ -123,12 +123,7 @@ public class SkillsListener extends PluginListener {
 			}
 			etc.getServer().setBlockData(block.getX(), block.getY(), block.getZ(), durability);
 		}
-		for (SkillsPlayer p : playerList){
-			if(player.getName().equals(p.getName())){
-				sp = p;
-				break;
-			}	
-		}
+		
 		if(durability - sp.getLevel(skill) - tool > this.tobroke){
 			player.sendMessage("This block is too hard for you!");
 		}
@@ -151,10 +146,9 @@ public class SkillsListener extends PluginListener {
 	}
 	
 	public boolean onBlockPlace(Player player, Block block, Block blockClicked, Item itemInHand) {
-		SkillsPlayer sp = null;
+		SkillsPlayer sp = this.playersList.get(player);
+		
 		int skill = 0;
-		
-		
 		if(this.type2skill[block.getType() + 100] > 0){
 			skill = this.type2skill[block.getType() + 100];
 		}
@@ -163,12 +157,6 @@ public class SkillsListener extends PluginListener {
 			return false;
 		}
 		
-		for (SkillsPlayer p : playerList){
-			if(player.getName().equals(p.getName())){
-				sp = p;
-				break;
-			}	
-		}
 		etc.getServer().setBlockData(block.getX(), block.getY(), block.getZ(), sp.getLevel(skill));
 		sp.giveExp(skill, 1);
 		return false;
@@ -178,15 +166,9 @@ public class SkillsListener extends PluginListener {
     {
         if ((split[0].equalsIgnoreCase("/exp")) && (player.canUseCommand("/exp")))
         {
-        	SkillsPlayer sp = null;
-        	for (SkillsPlayer p : playerList){
-    			if(player.getName().equals(p.getName())){
-    				sp = p;
-    				break;
-    			}	
-    		}
-            player.sendMessage(sp.getName()+" are:");
-            for(int i = 1; i <= this.skills_count; i++){
+        	SkillsPlayer sp = this.playersList.get(player);
+            player.sendMessage(player.getName()+" are:");
+            for(int i = 1; i <= this.skillsCount; i++){
             	player.sendMessage(this.rang[sp.getLevel(i)]+" "+this.skills[i]+"; level - "+sp.getLevel(i)+"; exp - "+sp.getExp(i)+";");
             }
             return true;
@@ -195,16 +177,11 @@ public class SkillsListener extends PluginListener {
         {
         	try
         	{
-        		SkillsPlayer sp = null;
+        		SkillsPlayer sp = this.playersList.get(etc.getServer().getPlayer(split[1]));
         		int skill = 0;
         		int amount = Integer.parseInt(split[3]); 
-        		for (SkillsPlayer p : playerList){
-        			if(split[1].equalsIgnoreCase(p.getName())){
-        				sp = p;
-        				break;
-        			}
-        		}
-        		for(int i = 1; i <= this.skills_count; i++){
+
+        		for(int i = 1; i <= this.skillsCount; i++){
         			if(skills[i].equalsIgnoreCase(split[2])){
         				skill = i;
         				break;

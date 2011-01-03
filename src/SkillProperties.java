@@ -197,13 +197,14 @@ public class SkillProperties {
 		for(int i = 1;i < this.Exp.length ; i++)
 		{
 			if((expirence < this.Exp[i] ) &&   (expirence > this.Exp[i-1] )) 
-				return i-1;
+				return i;
 		}
-		return 0;
+		return (expirence > this.Exp[this.Exp.length-1])? this.Exp.length-1:1;
 		
 	}
 	public String GetRangFromLevel(int level)
 	{
+		level--;
 		if(level < this.Rang.length)
 			return this.Rang[level];
 		else

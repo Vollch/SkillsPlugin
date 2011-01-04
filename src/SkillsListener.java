@@ -132,8 +132,9 @@ public class SkillsListener extends PluginListener {
     	if(!defender.isPlayer()){
     		return false;
     	}
-    	double dodge = this.Props.Dodge[this.playersList.get(defender.getPlayer()).getLevel((int)this.Props.Dodge[0])];
-    	attacker.getPlayer().sendMessage("Enemy dodge: "+dodge);
+    	//this.playersList.get(defender.getPlayer()).getLevel((int)this.Props.Dodge[0])
+    	double dodge = this.Props.Dodge[1];
+    	attacker.getPlayer().sendMessage("Enemy dodge: "+String.valueOf(dodge));
     	if(Math.random() < dodge){
     		this.playersList.get(defender.getPlayer()).giveExp((int)this.Props.Dodge[0], 1);
     		return true;
@@ -146,15 +147,27 @@ public class SkillsListener extends PluginListener {
     		Item it = defender.getPlayer().getInventory().getItemFromSlot(i);
     		if(it != null){
     			def += this.Props.ArmorDefense[it.getItemId()];
-    			it.setDamage(it.getDamage() + (int)def / 4);
-    			attacker.getPlayer().sendMessage(String.valueOf(it.getDamage()));
+    			it.setDamage(it.getDamage() + (int)hit / 4);
     		}
     	}
     	def *= this.Props.armorMod;
     	if(hit > def){
-    		defender.getPlayer().setHealth(defender.getPlayer().getHealth() - ((int)def - (int)hit));
+    		int hp = defender.getPlayer().getHealth() - ((int)hit - (int)def);
+    		defender.getPlayer().setHealth(hp);
+    		
+        	lc anim = defender.getPlayer().getEntity();
+        	if(hp < 1){
+        		anim.l.a(anim, (byte)3);
+        	}
+        	else
+        	{
+        		anim.l.a(anim, (byte)2);
+        	}
+        	
     	}
-    	attacker.getPlayer().sendMessage("Hit: "+(int)hit+" Def: "+(int)def);
+    	attacker.getPlayer().sendMessage("Hit: "+(double)hit+" Def: "+(double)def);
+    	
+
     	return true;
     }
 }

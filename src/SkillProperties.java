@@ -108,9 +108,9 @@ public class SkillProperties {
 				if(props.containsKey(Skills[i] + "Dodge")) {
 					temp = props.getString(Skills[i] + "Dodge").split(",");
 					this.Dodge = new double[temp.length + 1];
-					Dodge[0] = i;
+					this.Dodge[0] = i;
 					for(int ii = 0; ii < temp.length; ii++) {
-						Dodge[i+1] = Double.valueOf(temp[ii]);
+						this.Dodge[i+1] = Double.valueOf(temp[ii]);
 					}
 				}
 			}

@@ -10,9 +10,11 @@ public class SkillProperties {
 	public String[] Rang;
 	public int[] Exp;
 	public int[][] Tools;
-	public int[] WeaponSkill = new int[400]; 
-	public int[] WeaponDamage = new int[400];
-	public int[] ArmorDefense = new int[400];
+	public int[] WeaponsSkill = new int[400]; 
+	public int[] WeaponsDamage = new int[400];
+	public int[] ArmorsSkill = new int[400];
+	public int[] ArmorsDefense = new int[400];
+	public int[] ArmorsDurability = new int[400];
 	public double[] Dodge;
 	public int baseDurability;
 	public int toBroke;
@@ -94,15 +96,17 @@ public class SkillProperties {
 					temp = props.getString(Skills[i] + "Weapons").split(",");
 					for(String str : temp) {
 						String[] temp2 = str.split("-");
-						this.WeaponSkill[Integer.parseInt(temp2[0])] = i;
-						this.WeaponDamage[Integer.parseInt(temp2[0])] = Integer.parseInt(temp2[1]);
+						this.WeaponsSkill[Integer.parseInt(temp2[0])] = i;
+						this.WeaponsDamage[Integer.parseInt(temp2[0])] = Integer.parseInt(temp2[1]);
 					}
 				}
 				if(props.containsKey(Skills[i] + "Armors")) {
 					temp = props.getString(Skills[i] + "Armors").split(",");
 					for(String str : temp) {
 						String[] temp2 = str.split("-");
-						this.ArmorDefense[Integer.parseInt(temp2[0])] = Integer.parseInt(temp2[1]);
+						this.ArmorsSkill[Integer.parseInt(temp2[0])] = i;
+						this.ArmorsDefense[Integer.parseInt(temp2[0])] = Integer.parseInt(temp2[2]);
+						this.ArmorsDurability[Integer.parseInt(temp2[0])] = Integer.parseInt(temp2[1]);
 					}
 				}
 				if(props.containsKey(Skills[i] + "Dodge")) {
@@ -110,7 +114,7 @@ public class SkillProperties {
 					this.Dodge = new double[temp.length + 1];
 					this.Dodge[0] = i;
 					for(int ii = 0; ii < temp.length; ii++) {
-						this.Dodge[i+1] = Double.valueOf(temp[ii]);
+						this.Dodge[ii+1] = Double.valueOf(temp[ii]);
 					}
 				}
 			}

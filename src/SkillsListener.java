@@ -78,7 +78,7 @@ public class SkillsListener extends PluginListener {
 			player.sendMessage(player.getName() + " are:");
 			for(int i = 1; i < Props.Skills.length; i++) {
 				int level = sp.getLevel(i);
-				if(level < Props.Exp.length - 1){
+				if(level < Props.Skills.length - 1){
 					player.sendMessage(Props.GetRangFromLevel(level) + " " + Props.Skills[i] + "; level - " + level + "; exp - " + sp.getExp(i) + "(" + Props.Exp[level + 1] + ");");
 				}
 				else
@@ -112,62 +112,106 @@ public class SkillsListener extends PluginListener {
 			}
 			return true;
 		}
+		else if((split[0].equalsIgnoreCase("/setmods")) && (player.canUseCommand("/setmods"))) {
+			try {
+				if(Double.valueOf(split[1]) > 0 && Double.valueOf(split[2]) > 0){
+					this.Props.weaponMod = Double.valueOf(split[1]);
+					this.Props.armorMod = Double.valueOf(split[2]);
+				}
+				else {
+					player.sendMessage("Syntax: <weapon modifier> <armor modifier>");
+				}
+			}
+			catch(Exception e) {
+				player.sendMessage("Syntax: <weapon modifier> <armor modifier>");
+			}
+			return true;
+		}
 		return false;
 	}
 	
     public boolean onAttack(LivingEntity attacker, LivingEntity defender, Integer amount) {
-    	if(!attacker.isPlayer()){
-    		return false;
-    	}
-    	int weapon = attacker.getPlayer().getItemInHand();
-    	if(weapon == -1){
-    		weapon = 399;
-    	}
-    	int skill = Props.WeaponSkill[weapon];
-    	if(skill == 0){
-    		attacker.getPlayer().sendMessage("You can't fight with such thing in hands!");
-    		return true;
-    	}
-    	this.playersList.get(attacker.getPlayer()).giveExp(skill, 1);
-    	if(!defender.isPlayer()){
-    		return false;
-    	}
-    	//this.playersList.get(defender.getPlayer()).getLevel((int)this.Props.Dodge[0])
-    	double dodge = this.Props.Dodge[1];
-    	attacker.getPlayer().sendMessage("Enemy dodge: "+String.valueOf(dodge));
-    	if(Math.random() < dodge){
-    		this.playersList.get(defender.getPlayer()).giveExp((int)this.Props.Dodge[0], 1);
-    		return true;
-    	} 	
-    	int damage = Props.WeaponDamage[weapon];
-    	int level = this.playersList.get(attacker.getPlayer()).getLevel(skill);
-    	double hit = damage * (1 + (level * this.Props.weaponMod));
-    	double def = 0;
-    	for(int i = 36; i < 40; i++){
-    		Item it = defender.getPlayer().getInventory().getItemFromSlot(i);
-    		if(it != null){
-    			def += this.Props.ArmorDefense[it.getItemId()];
-    			it.setDamage(it.getDamage() + (int)hit / 4);
-    		}
-    	}
-    	def *= this.Props.armorMod;
-    	if(hit > def){
-    		int hp = defender.getPlayer().getHealth() - ((int)hit - (int)def);
-    		defender.getPlayer().setHealth(hp);
-    		
-        	lc anim = defender.getPlayer().getEntity();
-        	if(hp < 1){
-        		anim.l.a(anim, (byte)3);
+    	if(attacker.isPlayer()){
+        	int weapon = attacker.getPlayer().getItemInHand();
+        	if(weapon == -1){
+        		weapon = 399;
+        	}
+        	
+        	int wskill = Props.WeaponsSkill[weapon];
+        	if(wskill == 0){
+        		attacker.getPlayer().sendMessage("You can't fight with such thing in hands!");
+        		return true;
+        	}
+        	
+        	if(!defender.isPlayer()){
+        		this.playersList.get(attacker.getPlayer()).giveExp(wskill, 1);
+        		return false;
         	}
         	else
         	{
-        		anim.l.a(anim, (byte)2);
+            	double dodge = this.Props.Dodge[this.playersList.get(defender.getPlayer()).getLevel((int)this.Props.Dodge[0])];
+            	if(Math.random() < dodge){
+            		this.playersList.get(defender.getPlayer()).giveExp((int)this.Props.Dodge[0], 1);
+            		attacker.getPlayer().sendMessage("Enemy dodged!");
+            		return true;
+            	}
         	}
+            	
+        	int level = this.playersList.get(attacker.getPlayer()).getLevel(wskill);
+        	double hit = Props.WeaponsDamage[weapon] * (1 + (level * this.Props.weaponMod));
         	
+        	Inventory inv = defender.getPlayer().getInventory();
+        	double def = 0;
+        	for(int i = 36; i < 40; i++){
+        		Item it = inv.getItemFromSlot(i);
+        		if(it != null){
+        			int askill = this.Props.ArmorsSkill[it.getItemId()];
+        			if(askill > 0){
+             			this.playersList.get(defender.getPlayer()).giveExp(askill, 1);
+            			def += this.Props.ArmorsDefense[it.getItemId()];
+            			int ahit = (int)hit - this.playersList.get(defender.getPlayer()).getLevel(askill);
+            			if(ahit > 0){
+            				if(it.getDamage() + ahit < this.Props.ArmorsDurability[it.getItemId()]){
+            					inv.setSlot(it.getItemId(), 1, it.getDamage() + ahit, i);
+            				}
+            				else
+            				{
+            					inv.removeItem(i);
+            				}
+            			}
+        			}
+        		}
+        	}
+        	inv.update();
+        	
+        	def *= this.Props.armorMod;
+        	
+        	if(hit > def){
+        		this.playersList.get(attacker.getPlayer()).giveExp(wskill, (int)hit - (int)def);
+        		int hp = defender.getPlayer().getHealth() - ((int)hit - (int)def);
+        		
+            	lc anim = defender.getPlayer().getEntity();
+            	if(hp < 1){
+            		//anim.l.a(anim, (byte)3);
+            		defender.getPlayer().setHealth(1);
+            		return false;
+            	}
+            	else
+            	{
+            		anim.l.a(anim, (byte)2);
+            		defender.getPlayer().setHealth(hp);
+            	}
+        	}
+        	attacker.getPlayer().sendMessage("Hit: "+(double)hit+" Def: "+(double)def);
+        	return true;
     	}
-    	attacker.getPlayer().sendMessage("Hit: "+(double)hit+" Def: "+(double)def);
-    	
-
-    	return true;
+    	else if(defender.isPlayer()){
+        	double dodge = this.Props.Dodge[this.playersList.get(defender.getPlayer()).getLevel((int)this.Props.Dodge[0])];
+        	if(Math.random() < dodge){
+        		this.playersList.get(defender.getPlayer()).giveExp((int)this.Props.Dodge[0], 1);
+        		return true;
+        	} 
+    	}
+    	return false;
     }
 }

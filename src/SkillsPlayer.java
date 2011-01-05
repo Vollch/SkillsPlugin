@@ -8,16 +8,13 @@ public class SkillsPlayer {
 		this.player = player;
 		String[] s = skills.split(":");
 		for(int i = 0; i < s.length; i++) {
-			this.skillExp[i] = Integer.parseInt(s[i]);
+			this.skillExp[i+1] = Integer.parseInt(s[i]);
 		}
 	}
 
 	public SkillsPlayer(SkillsListener parent, Player player) {
 		this.parent = parent;
 		this.player = player;
-		for(int i = 0; i < this.parent.Props.Skills.length; i++) {
-			this.skillExp[i] = 0;
-		}
 	}
 
 	public String getName() {
@@ -34,8 +31,11 @@ public class SkillsPlayer {
 
 	public void giveExp(int skill, int value) {
 		int before = this.getLevel(skill);
-		this.skillExp[skill] += value;
-		if(this.getLevel(skill) > before) {
+		if(this.skillExp[skill] + value < 0)
+			this.skillExp[skill] = 0;
+		else
+			this.skillExp[skill] += value;
+		if(this.getLevel(skill) != before) {
 			this.player.sendMessage("Congratulations! You are " + this.parent.Props.Rang[this.getLevel(skill)] + " " + this.parent.Props.Skills[skill] + "!");
 		}
 	}

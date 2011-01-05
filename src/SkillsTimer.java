@@ -19,8 +19,8 @@ public class SkillsTimer extends TimerTask {
 			while(keys.hasMoreElements()) {
 				SkillsPlayer sp = this.parent.playersList.get(keys.nextElement());
 				String skills = "";
-				for(int i = 0; i < this.parent.Props.Skills.length; i++) {
-					if(i > 0) {
+				for(int i = 1; i < this.parent.Props.Skills.length; i++) {
+					if(i > 1) {
 						skills = skills + ":";
 					}
 					skills = skills + String.valueOf(sp.getExp(i));

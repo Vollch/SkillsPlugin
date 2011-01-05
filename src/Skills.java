@@ -18,10 +18,12 @@ public class Skills extends Plugin {
 	public void enable() {
 		etc.getInstance().addCommand("/exp", "- Shows your skills level and experience.");
 		etc.getInstance().addCommand("/giveexp", "- Give experience to player.");
+		etc.getInstance().addCommand("/setmods", "- Set armors and weapons modifiers.");
 	}
 
 	public void disable() {
 		etc.getInstance().removeCommand("/exp");
 		etc.getInstance().removeCommand("/giveexp");
+		etc.getInstance().removeCommand("/setmods");
 	}
 }

@@ -1,4 +1,3 @@
-import java.io.IOException;
 import java.util.Hashtable;
 import java.util.Timer;
 import java.util.logging.Logger;
@@ -32,7 +31,7 @@ public class SkillsListener extends PluginListener {
 				this.playersList.put(player, new SkillsPlayer(this, player));
 			}
 		}
-		catch(IOException ioe) {}
+		catch(Exception e) {}
 	}
 
 	public boolean onBlockBreak(Player player, Block block) {
@@ -42,7 +41,9 @@ public class SkillsListener extends PluginListener {
 			return false;
 		int tool = Props.GetToolLevel(player.getItemInHand(), skill);
 		int durability = Props.GetDurability(block);
-		player.sendMessage("Skill - " + Integer.toString(sp.getLevel(skill)) + " Tool - " + Integer.toString(tool) + " Dura - " + Integer.toString(durability)+" Item - "+player.getItemInHand());
+		if(this.Props.debug){
+			player.sendMessage("Skill - " + Integer.toString(sp.getLevel(skill)) + " Tool - " + Integer.toString(tool) + " Dura - " + Integer.toString(durability));
+		}
 		if(durability - sp.getLevel(skill) - tool > Props.toBroke) {
 			player.sendMessage("This block is too hard for you!");
 		}
@@ -67,63 +68,102 @@ public class SkillsListener extends PluginListener {
 		int skill = Props.GetCreateSkill(block);
 		if(skill < 1)
 			return false;
+		if(this.Props.debug){
+			player.sendMessage("Skill - " + Integer.toString(sp.getLevel(skill)));
+		}
 		etc.getServer().setBlockData(block.getX(), block.getY(), block.getZ(), sp.getLevel(skill));
 		sp.giveExp(skill, 1);
 		return false;
 	}
 
 	public boolean onCommand(Player player, String[] split) {
-		if((split[0].equalsIgnoreCase("/exp")) && (player.canUseCommand("/exp"))) {
-			SkillsPlayer sp = this.playersList.get(player);
-			player.sendMessage(player.getName() + " are:");
-			for(int i = 1; i < Props.Skills.length; i++) {
-				int level = sp.getLevel(i);
-				if(level < Props.Skills.length - 1){
-					player.sendMessage(Props.GetRangFromLevel(level) + " " + Props.Skills[i] + "; level - " + level + "; exp - " + sp.getExp(i) + "(" + Props.Exp[level + 1] + ");");
-				}
-				else
-				{
-					player.sendMessage(Props.GetRangFromLevel(level) + " " + Props.Skills[i] + "; level - " + level + "; exp - " + sp.getExp(i) + ";");
-				}
+		if(split[0].equalsIgnoreCase("/skills") && player.canUseCommand("/skills")) {	
+			Player p;
+			if(split.length > 1 && player.canUseCommand("/skillsother")){
+				p = etc.getServer().getPlayer(split[1]);
 			}
-			return true;
-		}
-		else if((split[0].equalsIgnoreCase("/giveexp")) && (player.canUseCommand("/giveexp"))) {
-			try {
-				SkillsPlayer sp = this.playersList.get(etc.getServer().getPlayer(split[1]));
-				int skill = 0;
-				int amount = Integer.parseInt(split[3]);
+			else{
+				p = player;
+			}
+			if(p != null){
+				SkillsPlayer sp = this.playersList.get(p);
+				player.sendMessage(sp.getName() + " are:");
 				for(int i = 1; i < Props.Skills.length; i++) {
-					if(Props.Skills[i].equalsIgnoreCase(split[2])) {
-						skill = i;
-						break;
+					int level = sp.getLevel(i);
+					if(level < Props.Skills.length - 1){
+						player.sendMessage(Props.GetRangFromLevel(level) + " " + Props.Skills[i] + "; level - " + level + "; exp - " + sp.getExp(i) + "(" + Props.Exp[level + 1] + ");");
+					}
+					else{
+						player.sendMessage(Props.GetRangFromLevel(level) + " " + Props.Skills[i] + "; level - " + level + "; exp - " + sp.getExp(i) + ";");
 					}
 				}
-				if(amount != 0 && skill > 0 && sp != null) {
-					sp.giveExp(skill, amount);
-					player.sendMessage("Done!");
-				}
-				else {
-					player.sendMessage("Syntax: <playername> <skillname> <amount>");
-				}
+				return true;
 			}
-			catch(Exception e) {
-				player.sendMessage("Syntax: <playername> <skillname> <amount>");
-			}
+			player.sendMessage("Correct usage is: /skills <playername>");
 			return true;
 		}
-		else if((split[0].equalsIgnoreCase("/setmods")) && (player.canUseCommand("/setmods"))) {
-			try {
-				if(Double.valueOf(split[1]) > 0 && Double.valueOf(split[2]) > 0){
-					this.Props.weaponMod = Double.valueOf(split[1]);
-					this.Props.armorMod = Double.valueOf(split[2]);
+		else if(split[0].equalsIgnoreCase("/reset") && player.canUseCommand("/reset")) {
+			Player p;
+			if(split.length > 1){
+				p = etc.getServer().getPlayer(split[1]);
+			}
+			else{
+				p = player;
+			}
+			if(p != null){
+				SkillsPlayer sp = this.playersList.get(p);
+				for(int i = 1; i < Props.Skills.length; i++) {
+					sp.setExp(i, Props.Exp[1]);
 				}
-				else {
-					player.sendMessage("Syntax: <weapon modifier> <armor modifier>");
+				player.sendMessage("Done!");
+				return true;
+			}
+			player.sendMessage("Correct usage is: /reset <playername>");
+			return true;
+		}
+		else if(split[0].equalsIgnoreCase("/giveexp") && player.canUseCommand("/giveexp")) {
+			if(split.length > 3){
+				Player p = etc.getServer().getPlayer(split[1]);
+				if(p != null){
+					SkillsPlayer sp = this.playersList.get(p);
+					int skill = 0;
+					int amount = Integer.parseInt(split[3]);
+					for(int i = 1; i < Props.Skills.length; i++) {
+						if(Props.Skills[i].equalsIgnoreCase(split[2])) {
+							skill = i;
+							break;
+						}
+					}
+					if(amount != 0 && skill > 0 && sp != null) {
+						sp.giveExp(skill, amount);
+						player.sendMessage("Done!");
+						return true;
+					}
 				}
 			}
-			catch(Exception e) {
-				player.sendMessage("Syntax: <weapon modifier> <armor modifier>");
+			player.sendMessage("Correct usage is: /giveexp [playername] [skillname] [amount]");
+			return true;
+		}
+		else if(split[0].equalsIgnoreCase("/setmods") && player.canUseCommand("/setmods")) {
+			if(split.length > 2) {
+				if(Double.valueOf(split[1]) != 0 && Double.valueOf(split[2]) != 0){
+					this.Props.weaponMod = Double.valueOf(split[1]);
+					this.Props.armorMod = Double.valueOf(split[2]);
+					player.sendMessage("Done!");
+					return true;
+				}
+			}
+			player.sendMessage("Correct usage is: /setmods [weapon] [armor]");
+			return true;
+		}
+		else if(split[0].equalsIgnoreCase("/debug") && player.canUseCommand("/debug")) {
+			if(this.Props.debug){
+				this.Props.debug = false;
+				player.sendMessage("Debug messages is now not showing.");
+			}
+			else{
+				this.Props.debug = true;
+				player.sendMessage("Debug messages is now showing.");
 			}
 			return true;
 		}
@@ -131,6 +171,9 @@ public class SkillsListener extends PluginListener {
 	}
 	
     public boolean onAttack(LivingEntity attacker, LivingEntity defender, Integer amount) {
+    	if(!this.Props.combat)
+    		return false;
+    	
     	if(attacker.isPlayer()){
         	int weapon = attacker.getPlayer().getItemInHand();
         	if(weapon == -1){
@@ -159,8 +202,8 @@ public class SkillsListener extends PluginListener {
             	
         	int level = this.playersList.get(attacker.getPlayer()).getLevel(wskill);
         	double hit = Props.WeaponsDamage[weapon] * (1 + (level * this.Props.weaponMod));
-        	
         	Inventory inv = defender.getPlayer().getInventory();
+        	
         	double def = 0;
         	for(int i = 36; i < 40; i++){
         		Item it = inv.getItemFromSlot(i);
@@ -202,7 +245,9 @@ public class SkillsListener extends PluginListener {
             		defender.getPlayer().setHealth(hp);
             	}
         	}
-        	attacker.getPlayer().sendMessage("Hit: "+(double)hit+" Def: "+(double)def);
+        	if(this.Props.debug){
+        		attacker.getPlayer().sendMessage("Hit: "+(double)hit+" Def: "+(double)def);
+        	}
         	return true;
     	}
     	else if(defender.isPlayer()){

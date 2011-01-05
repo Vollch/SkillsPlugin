@@ -1,0 +1,55 @@
+Skills - hMod plug-in adding combat and build related skills.
+
+Overview:
+Each player hew a skills, and exp\level of it. Level can be from 1 to 15.
+
+Each block in the world hew a durability from 1 to 15 equal to skill of player which place it, or base value from properties.
+
+When player trying to destroy block his 'damage' calculating as "destroy_skill_for_target_block" + "tool_bonus". With, in example, damage 3, and block durability 6 you should break that block 2 times, before you actual break it. Gained exp equal crushed durability.
+
+When player place block, block's durability set equal to appropriate create skill. Placing of any block +1 exp.
+
+If combat system turned on:
+
+When player take damage from other player or mob he hew a chance to dodge. Successful dodge +1 exp.
+
+When player hit mob he always gain 1 weapon exp, and do standart damage.
+
+When player hit player(and dodge failed):
+Damage to defender = (weapon_damage * (1 + (weapon_skill * weapon_mod_from_properties)))
+Damage to defender armor = damage_to_defender - defender_armor_skill
+Damage to defender hp = damage_to_defender - (defense_of_all_armor_parts * armor_mod_from_properties)
+Defender gain +1 exp for each wearied part of armor, attacker gain weapon exp equal to defender loosed hp.
+
+Available commands:
+/skills - Shows your skills level and experience.
+/skills <playername> - Shows player levels and skills experience. You should be allowed to use virtual /skillsother command to use /skills on other players.
+/giveexp [playername] [skillname] [amount] - Give experience to player.
+/reset <playername> - Reset player skills to first level.
+/setmods [weapon] [armor] - Set armors and weapons modifiers.
+/debug - Turn debug messages on\off for all players.
+
+Skills.properties format:
+debug - Turn showing of debug messages on\off.
+combat - Turn combat system on\off.
+base-durability - Base durability value for block not listed in "Durability"
+to-broke - Maximal difference between you skill, and block durability to being able broke it.
+weapon-mod - Weapons damage multiplier.
+armor-mod - Armor defense multiplier.
+save-timer - Milliseconds between saves players skills to file.
+
+Durability - Base durability for different blocks id-dur:id-dur:id-dur etc.
+Rang - Ranges for different levels.
+Exp - Experience table.
+
+SkillNames - Skills names.
+
+<skillname>Destroy - Associate destroying blocks with given IDs to skill.
+<skillname>Create - Associate placing blocks with given IDs to skill.
+<skillname>Tools - Tools for skill id-mod:id-mod:id-mod etc.
+
+<skillname>Weapons - Weapons for combat skill. id-dmg:id-dmg:id-dmg etc. Bare-hands ID should be 399 instead of -1.
+
+<skillname>Armors - Armor for combat skill. id-dur-def:id-dur-def:id-dur-def etc.
+
+<skillname>Dodge - Dodge chance for each level. 0.05 = 5%, 1 = 100%. 

@@ -19,6 +19,8 @@ public class SkillProperties {
 	public int baseDurability;
 	public int toBroke;
 	public int saveTimer;
+	public boolean debug;
+	public boolean combat;
 	public double weaponMod;
 	public double armorMod;
 
@@ -38,6 +40,8 @@ public class SkillProperties {
 			PropertiesFile props = new PropertiesFile("Skills.properties");
 			String[] temp;
 			props.load();
+			this.debug = props.getBoolean("debug", true);
+			this.combat = props.getBoolean("combat", true);
 			this.baseDurability = props.getInt("base-durability", 1);
 			this.toBroke = props.getInt("to-broke", 5);
 			this.saveTimer = props.getInt("save-timer", 30000);
@@ -130,9 +134,13 @@ public class SkillProperties {
 			PropertiesFile props = new PropertiesFile("Skills.properties");
 			props = new PropertiesFile("Skills.properties");
 			props.load();
+			props.setBoolean("debug", true);
+			props.setBoolean("combat", true);
 			props.setInt("base-durability", 1);
 			props.setInt("to-broke", 5);
 			props.setInt("save-timer", 30000);
+			props.setDouble("weapon-mod", 0.3);
+			props.setDouble("armor-mod", 1);
 			props.save();
 		}
 		catch(IOException ioe) {}

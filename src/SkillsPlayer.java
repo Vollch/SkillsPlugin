@@ -1,7 +1,7 @@
 public class SkillsPlayer {
 	private SkillsListener parent;
 	private Player player;
-	private int[] skillExp = new int[20];
+	private int[] skillExp = new int[100];
 
 	public SkillsPlayer(SkillsListener parent, Player player, String skills) {
 		this.parent = parent;
@@ -28,7 +28,11 @@ public class SkillsPlayer {
 	public int getExp(int skill) {
 		return this.skillExp[skill];
 	}
-
+	
+	public void setExp(int skill, int value) {
+		this.skillExp[skill] = value;
+	}
+	
 	public void giveExp(int skill, int value) {
 		int before = this.getLevel(skill);
 		if(this.skillExp[skill] + value < 0)

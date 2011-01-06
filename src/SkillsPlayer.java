@@ -37,9 +37,9 @@ public class SkillsPlayer {
 				String skills = "";
 				for(int i = 1; i < SkillsProperties.Skills.length; i++) {
 					if(i > 1) {
-						skills = skills + ":";
+						skills += ":";
 					}
-					skills = skills + String.valueOf(sp.getExp(i));
+					skills += String.valueOf(sp.getExp(i));
 				}
 				playersFile.setString(sp.getName(), skills);
 			}
@@ -68,7 +68,7 @@ public class SkillsPlayer {
 	}
 
 	public int getLevel(int skill) {
-		return SkillsProperties.GetLevelFromExp(this.skillExp[skill]);
+		return SkillsProperties.getLevelFromExp(this.skillExp[skill], skill);
 	}
 
 	public int getExp(int skill) {
@@ -81,12 +81,14 @@ public class SkillsPlayer {
 	
 	public void giveExp(int skill, int value) {
 		int before = this.getLevel(skill);
-		if(this.skillExp[skill] + value < 0)
+		if(this.skillExp[skill] + value < 0){
 			this.skillExp[skill] = 0;
-		else
+		}
+		else {
 			this.skillExp[skill] += value;
+		}
 		if(this.getLevel(skill) != before) {
-			this.player.sendMessage("Congratulations! You are " + SkillsProperties.Rang[this.getLevel(skill)] + " " + SkillsProperties.Skills[skill] + "!");
+			this.player.sendMessage("Congratulations! You are " + SkillsProperties.getRangForLevel(this.getLevel(skill), skill) + " " + SkillsProperties.Skills[skill] + "!");
 		}
 	}
 }

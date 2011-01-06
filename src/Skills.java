@@ -1,18 +1,26 @@
+import java.util.Timer;
 import java.util.logging.Logger;
 
 public class Skills extends Plugin {
-	static final SkillsListener listener = new SkillsListener();
-	static final Logger log = Logger.getLogger("Minecraft");
-	String name = "Skills";
-	String version = "0.4";
-
+	private static final Logger log = Logger.getLogger("Minecraft");
+	private static final SkillsListener listener = new SkillsListener();
+	private static final Timer timer = new Timer();
+	public static final String name = "Skills";
+	public static final String version = "0.4";
+	
 	public void initialize() {
-		log.info(name + " " + version + " initialized");
+		if(!SkillsProperties.loadConfig()){
+			log.info("Can't load properties TODO: Here should be load of default config... But it still balancing, and im too lazy to rewrite default function every time... So, now im just turn mod off :3");
+			return;
+		}
+		timer.scheduleAtFixedRate(new SkillsTimer(), 0L, SkillsProperties.saveTimer);
+		
 		etc.getLoader().addListener(PluginLoader.Hook.BLOCK_BROKEN, listener, this, PluginListener.Priority.MEDIUM);
 		etc.getLoader().addListener(PluginLoader.Hook.BLOCK_PLACE, listener, this, PluginListener.Priority.MEDIUM);
-		etc.getLoader().addListener(PluginLoader.Hook.LOGIN, listener, this, PluginListener.Priority.MEDIUM);
 		etc.getLoader().addListener(PluginLoader.Hook.COMMAND, listener, this, PluginListener.Priority.MEDIUM);
 		etc.getLoader().addListener(PluginLoader.Hook.ATTACK, listener, this, PluginListener.Priority.MEDIUM);
+		etc.getLoader().addListener(PluginLoader.Hook.SERVERCOMMAND, listener, this, PluginListener.Priority.LOW);
+		log.info(name + " " + version + " initialized");
 	}
 
 	public void enable() {

@@ -1,10 +1,57 @@
+import java.util.Enumeration;
+import java.util.Hashtable;
+
 public class SkillsPlayer {
-	private SkillsListener parent;
+	private static final PropertiesFile playersFile = new PropertiesFile("Skills.txt");
+	private static Hashtable<Player, SkillsPlayer> playersList = new Hashtable<Player, SkillsPlayer>();
+	
 	private Player player;
 	private int[] skillExp = new int[100];
-
-	public SkillsPlayer(SkillsListener parent, Player player, String skills) {
-		this.parent = parent;
+	
+	public static SkillsPlayer get(Player player){
+		if(playersList.containsKey(player)) {
+			return playersList.get(player);
+		}
+		try {
+			playersFile.load();
+			if(playersFile.containsKey(player.getName())) {
+				String skills = playersFile.getString(player.getName());
+				playersList.put(player, new SkillsPlayer(player, skills));
+			}
+			else {
+				playersList.put(player, new SkillsPlayer(player));
+			}
+			return playersList.get(player);
+		}
+		catch(Exception e) {
+			return null;
+		}
+	}
+	
+	public static boolean save(){
+		try {
+			playersFile.load();
+			Enumeration<Player> keys = playersList.keys();
+			while(keys.hasMoreElements()) {
+				SkillsPlayer sp = playersList.get(keys.nextElement());
+				String skills = "";
+				for(int i = 1; i < SkillsProperties.Skills.length; i++) {
+					if(i > 1) {
+						skills = skills + ":";
+					}
+					skills = skills + String.valueOf(sp.getExp(i));
+				}
+				playersFile.setString(sp.getName(), skills);
+			}
+			playersFile.save();
+			return true;
+		}
+		catch(Exception e) {
+			return false;
+		}
+	}
+	
+	private SkillsPlayer(Player player, String skills) {
 		this.player = player;
 		String[] s = skills.split(":");
 		for(int i = 0; i < s.length; i++) {
@@ -12,8 +59,7 @@ public class SkillsPlayer {
 		}
 	}
 
-	public SkillsPlayer(SkillsListener parent, Player player) {
-		this.parent = parent;
+	private SkillsPlayer(Player player) {
 		this.player = player;
 	}
 
@@ -22,7 +68,7 @@ public class SkillsPlayer {
 	}
 
 	public int getLevel(int skill) {
-		return this.parent.Props.GetLevelFromExp(this.skillExp[skill]);
+		return SkillsProperties.GetLevelFromExp(this.skillExp[skill]);
 	}
 
 	public int getExp(int skill) {
@@ -40,7 +86,7 @@ public class SkillsPlayer {
 		else
 			this.skillExp[skill] += value;
 		if(this.getLevel(skill) != before) {
-			this.player.sendMessage("Congratulations! You are " + this.parent.Props.Rang[this.getLevel(skill)] + " " + this.parent.Props.Skills[skill] + "!");
+			this.player.sendMessage("Congratulations! You are " + SkillsProperties.Rang[this.getLevel(skill)] + " " + SkillsProperties.Skills[skill] + "!");
 		}
 	}
 }

@@ -32,11 +32,11 @@ Available commands:
 Skills.properties format:
 debug - Turn showing of debug messages on\off.
 combat - Turn combat system on\off.
-base-durability - Base durability value for block not listed in "Durability"
-to-broke - Maximal difference between you skill, and block durability to being able broke it.
-weapon-mod - Weapons damage multiplier.
-armor-mod - Armor defense multiplier.
-save-timer - Milliseconds between saves players skills to file.
+baseDurability - Base durability value for block not listed in "Durability"
+toBroke - Maximal difference between you skill, and block durability to being able broke it.
+weaponMod - Weapons damage multiplier.
+armorMod - Armor defense multiplier.
+saveTimer - Milliseconds between saves players skills to file.
 
 Durability - Base durability for different blocks id-dur:id-dur:id-dur etc.
 Rang - Ranges for different levels.

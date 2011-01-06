@@ -1,50 +1,15 @@
-import java.util.Hashtable;
-import java.util.Timer;
-import java.util.logging.Logger;
-
 public class SkillsListener extends PluginListener {
-	static final Logger log = Logger.getLogger("Minecraft");
-	public SkillProperties Props;
-	public PropertiesFile propertiesFile;
-	public PropertiesFile playersFile;
-	public Hashtable<Player, SkillsPlayer> playersList = new Hashtable<Player, SkillsPlayer>();
-	public Timer timer;
-
-	public SkillsListener() {
-		this.Props = new SkillProperties();
-		this.timer = new Timer();
-		this.timer.scheduleAtFixedRate(new SkillsTimer(this), 0L, Props.saveTimer);
-	}
-
-	public void onLogin(Player player) {
-		if(this.playersList.containsKey(player)) {
-			return;
-		}
-		try {
-			this.playersFile = new PropertiesFile("Skills.txt");
-			this.playersFile.load();
-			if(this.playersFile.containsKey(player.getName())) {
-				String skills = this.playersFile.getString(player.getName());
-				this.playersList.put(player, new SkillsPlayer(this, player, skills));
-			}
-			else {
-				this.playersList.put(player, new SkillsPlayer(this, player));
-			}
-		}
-		catch(Exception e) {}
-	}
-
 	public boolean onBlockBreak(Player player, Block block) {
-		SkillsPlayer sp = this.playersList.get(player);
-		int skill = Props.GetDestroySkill(block);
+		SkillsPlayer sp = SkillsPlayer.get(player);
+		int skill = SkillsProperties.GetDestroySkill(block);
 		if(skill < 1)
 			return false;
-		int tool = Props.GetToolLevel(player.getItemInHand(), skill);
-		int durability = Props.GetDurability(block);
-		if(this.Props.debug){
+		int tool = SkillsProperties.GetToolLevel(player.getItemInHand(), skill);
+		int durability = SkillsProperties.GetDurability(block);
+		if(SkillsProperties.debug){
 			player.sendMessage("Skill - " + Integer.toString(sp.getLevel(skill)) + " Tool - " + Integer.toString(tool) + " Dura - " + Integer.toString(durability));
 		}
-		if(durability - sp.getLevel(skill) - tool > Props.toBroke) {
+		if(durability - sp.getLevel(skill) - tool > SkillsProperties.toBroke) {
 			player.sendMessage("This block is too hard for you!");
 		}
 		else {
@@ -64,11 +29,11 @@ public class SkillsListener extends PluginListener {
 	}
 
 	public boolean onBlockPlace(Player player, Block block, Block blockClicked, Item itemInHand) {
-		SkillsPlayer sp = this.playersList.get(player);
-		int skill = Props.GetCreateSkill(block);
+		SkillsPlayer sp = SkillsPlayer.get(player);
+		int skill = SkillsProperties.GetCreateSkill(block);
 		if(skill < 1)
 			return false;
-		if(this.Props.debug){
+		if(SkillsProperties.debug){
 			player.sendMessage("Skill - " + Integer.toString(sp.getLevel(skill)));
 		}
 		etc.getServer().setBlockData(block.getX(), block.getY(), block.getZ(), sp.getLevel(skill));
@@ -76,6 +41,15 @@ public class SkillsListener extends PluginListener {
 		return false;
 	}
 
+	public boolean onConsoleCommand(String[] split)
+	{
+	      if (split[0].equalsIgnoreCase("stop"))
+	      {
+	         SkillsPlayer.save();
+	      }
+	      return false;
+	}
+	
 	public boolean onCommand(Player player, String[] split) {
 		if(split[0].equalsIgnoreCase("/skills") && player.canUseCommand("/skills")) {	
 			Player p;
@@ -86,15 +60,15 @@ public class SkillsListener extends PluginListener {
 				p = player;
 			}
 			if(p != null){
-				SkillsPlayer sp = this.playersList.get(p);
+				SkillsPlayer sp = SkillsPlayer.get(p);
 				player.sendMessage(sp.getName() + " are:");
-				for(int i = 1; i < Props.Skills.length; i++) {
+				for(int i = 1; i < SkillsProperties.Skills.length; i++) {
 					int level = sp.getLevel(i);
-					if(level < Props.Skills.length - 1){
-						player.sendMessage(Props.GetRangFromLevel(level) + " " + Props.Skills[i] + "; level - " + level + "; exp - " + sp.getExp(i) + "(" + Props.Exp[level + 1] + ");");
+					if(level < SkillsProperties.Skills.length - 1){
+						player.sendMessage(SkillsProperties.GetRangFromLevel(level) + " " + SkillsProperties.Skills[i] + "; level - " + level + "; exp - " + sp.getExp(i) + "(" + SkillsProperties.Exp[level + 1] + ");");
 					}
 					else{
-						player.sendMessage(Props.GetRangFromLevel(level) + " " + Props.Skills[i] + "; level - " + level + "; exp - " + sp.getExp(i) + ";");
+						player.sendMessage(SkillsProperties.GetRangFromLevel(level) + " " + SkillsProperties.Skills[i] + "; level - " + level + "; exp - " + sp.getExp(i) + ";");
 					}
 				}
 				return true;
@@ -111,9 +85,9 @@ public class SkillsListener extends PluginListener {
 				p = player;
 			}
 			if(p != null){
-				SkillsPlayer sp = this.playersList.get(p);
-				for(int i = 1; i < Props.Skills.length; i++) {
-					sp.setExp(i, Props.Exp[1]);
+				SkillsPlayer sp = SkillsPlayer.get(p);
+				for(int i = 1; i < SkillsProperties.Skills.length; i++) {
+					sp.setExp(i, SkillsProperties.Exp[1]);
 				}
 				player.sendMessage("Done!");
 				return true;
@@ -125,11 +99,11 @@ public class SkillsListener extends PluginListener {
 			if(split.length > 3){
 				Player p = etc.getServer().getPlayer(split[1]);
 				if(p != null){
-					SkillsPlayer sp = this.playersList.get(p);
+					SkillsPlayer sp = SkillsPlayer.get(p);
 					int skill = 0;
 					int amount = Integer.parseInt(split[3]);
-					for(int i = 1; i < Props.Skills.length; i++) {
-						if(Props.Skills[i].equalsIgnoreCase(split[2])) {
+					for(int i = 1; i < SkillsProperties.Skills.length; i++) {
+						if(SkillsProperties.Skills[i].equalsIgnoreCase(split[2])) {
 							skill = i;
 							break;
 						}
@@ -147,8 +121,8 @@ public class SkillsListener extends PluginListener {
 		else if(split[0].equalsIgnoreCase("/setmods") && player.canUseCommand("/setmods")) {
 			if(split.length > 2) {
 				if(Double.valueOf(split[1]) != 0 && Double.valueOf(split[2]) != 0){
-					this.Props.weaponMod = Double.valueOf(split[1]);
-					this.Props.armorMod = Double.valueOf(split[2]);
+					SkillsProperties.weaponMod = Double.valueOf(split[1]);
+					SkillsProperties.armorMod = Double.valueOf(split[2]);
 					player.sendMessage("Done!");
 					return true;
 				}
@@ -157,12 +131,12 @@ public class SkillsListener extends PluginListener {
 			return true;
 		}
 		else if(split[0].equalsIgnoreCase("/debug") && player.canUseCommand("/debug")) {
-			if(this.Props.debug){
-				this.Props.debug = false;
+			if(SkillsProperties.debug){
+				SkillsProperties.debug = false;
 				player.sendMessage("Debug messages is now not showing.");
 			}
 			else{
-				this.Props.debug = true;
+				SkillsProperties.debug = true;
 				player.sendMessage("Debug messages is now showing.");
 			}
 			return true;
@@ -171,7 +145,7 @@ public class SkillsListener extends PluginListener {
 	}
 	
     public boolean onAttack(LivingEntity attacker, LivingEntity defender, Integer amount) {
-    	if(!this.Props.combat)
+    	if(!SkillsProperties.combat)
     		return false;
     	
     	if(attacker.isPlayer()){
@@ -180,41 +154,41 @@ public class SkillsListener extends PluginListener {
         		weapon = 399;
         	}
         	
-        	int wskill = Props.WeaponsSkill[weapon];
+        	int wskill = SkillsProperties.WeaponsSkill[weapon];
         	if(wskill == 0){
         		attacker.getPlayer().sendMessage("You can't fight with such thing in hands!");
         		return true;
         	}
         	
         	if(!defender.isPlayer()){
-        		this.playersList.get(attacker.getPlayer()).giveExp(wskill, 1);
+        		SkillsPlayer.get(attacker.getPlayer()).giveExp(wskill, 1);
         		return false;
         	}
         	else
         	{
-            	double dodge = this.Props.Dodge[this.playersList.get(defender.getPlayer()).getLevel((int)this.Props.Dodge[0])];
+            	double dodge = SkillsProperties.Dodge[SkillsPlayer.get(defender.getPlayer()).getLevel((int)SkillsProperties.Dodge[0])];
             	if(Math.random() < dodge){
-            		this.playersList.get(defender.getPlayer()).giveExp((int)this.Props.Dodge[0], 1);
+            		SkillsPlayer.get(defender.getPlayer()).giveExp((int)SkillsProperties.Dodge[0], 1);
             		attacker.getPlayer().sendMessage("Enemy dodged!");
             		return true;
             	}
         	}
             	
-        	int level = this.playersList.get(attacker.getPlayer()).getLevel(wskill);
-        	double hit = Props.WeaponsDamage[weapon] * (1 + (level * this.Props.weaponMod));
+        	int level = SkillsPlayer.get(attacker.getPlayer()).getLevel(wskill);
+        	double hit = SkillsProperties.WeaponsDamage[weapon] * (1 + (level * SkillsProperties.weaponMod));
         	Inventory inv = defender.getPlayer().getInventory();
         	
         	double def = 0;
         	for(int i = 36; i < 40; i++){
         		Item it = inv.getItemFromSlot(i);
         		if(it != null){
-        			int askill = this.Props.ArmorsSkill[it.getItemId()];
+        			int askill = SkillsProperties.ArmorsSkill[it.getItemId()];
         			if(askill > 0){
-             			this.playersList.get(defender.getPlayer()).giveExp(askill, 1);
-            			def += this.Props.ArmorsDefense[it.getItemId()];
-            			int ahit = (int)hit - this.playersList.get(defender.getPlayer()).getLevel(askill);
+        				SkillsPlayer.get(defender.getPlayer()).giveExp(askill, 1);
+            			def += SkillsProperties.ArmorsDefense[it.getItemId()];
+            			int ahit = (int)hit - SkillsPlayer.get(defender.getPlayer()).getLevel(askill);
             			if(ahit > 0){
-            				if(it.getDamage() + ahit < this.Props.ArmorsDurability[it.getItemId()]){
+            				if(it.getDamage() + ahit < SkillsProperties.ArmorsDurability[it.getItemId()]){
             					inv.setSlot(it.getItemId(), 1, it.getDamage() + ahit, i);
             				}
             				else
@@ -227,10 +201,10 @@ public class SkillsListener extends PluginListener {
         	}
         	inv.update();
         	
-        	def *= this.Props.armorMod;
+        	def *= SkillsProperties.armorMod;
         	
         	if(hit > def){
-        		this.playersList.get(attacker.getPlayer()).giveExp(wskill, (int)hit - (int)def);
+        		SkillsPlayer.get(attacker.getPlayer()).giveExp(wskill, (int)hit - (int)def);
         		int hp = defender.getPlayer().getHealth() - ((int)hit - (int)def);
         		
             	lc anim = defender.getPlayer().getEntity();
@@ -245,15 +219,15 @@ public class SkillsListener extends PluginListener {
             		defender.getPlayer().setHealth(hp);
             	}
         	}
-        	if(this.Props.debug){
+        	if(SkillsProperties.debug){
         		attacker.getPlayer().sendMessage("Hit: "+(double)hit+" Def: "+(double)def);
         	}
         	return true;
     	}
     	else if(defender.isPlayer()){
-        	double dodge = this.Props.Dodge[this.playersList.get(defender.getPlayer()).getLevel((int)this.Props.Dodge[0])];
+        	double dodge = SkillsProperties.Dodge[SkillsPlayer.get(defender.getPlayer()).getLevel((int)SkillsProperties.Dodge[0])];
         	if(Math.random() < dodge){
-        		this.playersList.get(defender.getPlayer()).giveExp((int)this.Props.Dodge[0], 1);
+        		SkillsPlayer.get(defender.getPlayer()).giveExp((int)SkillsProperties.Dodge[0], 1);
         		return true;
         	} 
     	}

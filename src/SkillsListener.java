@@ -19,7 +19,7 @@ public class SkillsListener extends PluginListener {
 			}
 			else {
 				durability -= 1;
-				sp.giveExp(1, sp.getLevel(skill));
+				sp.giveExp(skill, 1);
 				etc.getServer().setBlockData(block.getX(), block.getY(), block.getZ(), durability);
 				return true;
 			}

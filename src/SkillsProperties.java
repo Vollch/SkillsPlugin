@@ -1,4 +1,3 @@
-
 public class SkillsProperties {
 	private static final PropertiesFile propertiesFile = new PropertiesFile("Skills.properties");
 	private static int BaseDurability;
@@ -127,8 +126,8 @@ public class SkillsProperties {
 						WeaponSkill[Integer.parseInt(temp2[0])] = i;
 					}
 				}
-				if(propertiesFile.containsKey(Skills[i] + "Armors")) {
-					temp = propertiesFile.getString(Skills[i] + "Armors").split(",");
+				if(propertiesFile.containsKey(Skills[i] + "Armor")) {
+					temp = propertiesFile.getString(Skills[i] + "Armor").split(",");
 					for(String str : temp) {
 						temp2 = str.split("-");
 						SkillItem[i][Integer.parseInt(temp2[0])] = Integer.parseInt(temp2[2]);

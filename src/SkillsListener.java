@@ -1,4 +1,115 @@
 public class SkillsListener extends PluginListener {
+	public boolean onAttack(LivingEntity attacker, LivingEntity defender, Integer amount) {
+    	if(defender.isPlayer()){
+        	double dodge = SkillsProperties.Dodge[SkillsPlayer.get(defender.getPlayer()).getLevel((int)SkillsProperties.Dodge[0])];
+        	if(Math.random() < dodge){
+        		SkillsPlayer.get(defender.getPlayer()).giveExp((int)SkillsProperties.Dodge[0], 1);
+        		defender.getPlayer().sendMessage("You dodge enemy attack!");
+        		if(attacker.isPlayer()){
+        			attacker.getPlayer().sendMessage("Enemy dodged!");
+        		}
+        		return true;
+        	} 
+    	}
+    	return false;
+    }
+	
+    public boolean onDamage(PluginLoader.DamageType type, BaseEntity attacker, BaseEntity defender, int amount) {
+    	if(!SkillsProperties.combatOn)
+    		return false;
+    	
+    	if(type == PluginLoader.DamageType.ENTITY && attacker.isPlayer()){
+    		Player aplayer = attacker.getPlayer();
+    		
+    		int wskill = SkillsProperties.getWeaponSkill(aplayer.getItemInHand());
+        	if(wskill == 0){
+        		wskill = SkillsProperties.getWeaponSkill(399);
+        	}
+        	
+        	if(!defender.isPlayer()){
+        		SkillsPlayer.get(aplayer).giveExp(wskill, 2);
+        		return false;
+        	}
+ 
+        	int wdamage = SkillsProperties.getItemLevel(aplayer.getItemInHand(), wskill);
+        	int wlevel = SkillsPlayer.get(aplayer).getLevel(wskill);
+        	double thit = wdamage * (1 + (wlevel * SkillsProperties.weaponMod));
+        	
+        	Player dplayer = defender.getPlayer();
+        	Inventory inv = dplayer.getInventory();
+        	double def = 0;
+        	for(int slot = 36; slot < 40; slot++){
+        		Item it = inv.getItemFromSlot(slot);
+        		if(it != null){
+        			int id = it.getItemId();
+        			int askill = SkillsProperties.getArmorSkill(id);
+        			if(askill > 0){
+        				SkillsPlayer.get(dplayer).giveExp(askill, 1);
+            			def += SkillsProperties.getItemLevel(id, askill);
+            			int ahit = (int)thit - SkillsPlayer.get(defender.getPlayer()).getLevel(askill);
+            			if(ahit > 0){
+            				if(it.getDamage() + ahit < SkillsProperties.getArmorDurability(id)){
+            					inv.setSlot(id, 1, it.getDamage() + ahit, slot);
+            				}
+            				else
+            				{
+            					inv.removeItem(slot);
+            				}
+            			}
+        			}
+        		}
+        	}
+        	inv.update();
+        	def *= SkillsProperties.armorMod;
+        	
+        	if(thit > def){
+        		SkillsPlayer.get(aplayer).giveExp(wskill, (int)thit - (int)def);
+        		int hp = dplayer.getHealth() - ((int)thit - (int)def);
+        		
+            	if(hp < 1){
+            		dplayer.setHealth(1);
+            		return false;
+            	}
+            	else
+            	{
+            		lc anim = dplayer.getEntity();
+            		anim.l.a(anim, (byte)2);
+            		dplayer.setHealth(hp);
+            	}
+        	}
+        	if(SkillsProperties.debugOn){
+        		aplayer.sendMessage("Hit: "+(double)thit+" Def: "+(double)def);
+        	}
+        	return true;
+    	}
+    	if(defender.isPlayer()){
+    		Player dplayer = defender.getPlayer();
+    		if(dplayer.getHealth() > amount){
+    			dplayer.setHealth(dplayer.getHealth() - amount);
+    			lc anim = dplayer.getEntity();
+        		anim.l.a(anim, (byte)2);
+    			return true;
+    		}
+    		else{
+    			dplayer.setHealth(1);
+    			return false;
+    		}
+    	}
+    	return false;
+    }
+    
+    public boolean onExplode(Block block) {
+    	int durability = SkillsProperties.getBlockDurability(block);
+    	durability -= 2;
+    	if(durability > 0){
+    		etc.getServer().setBlockData(block.getX(), block.getY(), block.getZ(), durability);
+    		return true;
+    	}
+    	else {
+    		return false;
+    	}
+    }
+    
 	public boolean onBlockBreak(Player player, Block block) {
 		SkillsPlayer sp = SkillsPlayer.get(player);
 		int skill = SkillsProperties.getDestroySkill(block.getType());
@@ -194,97 +305,4 @@ public class SkillsListener extends PluginListener {
 		}
 		return false;
 	}
-	
-    public boolean onAttack(LivingEntity attacker, LivingEntity defender, Integer amount) {
-    	if(!SkillsProperties.combatOn)
-    		return false;
-    	
-    	if(attacker.isPlayer()){
-    		Player aplayer = attacker.getPlayer();
-    		
-    		int wskill = SkillsProperties.getWeaponSkill(aplayer.getItemInHand());
-        	if(wskill == 0){
-        		aplayer.sendMessage("You can't fight with such thing in hands!");
-        		return true;
-        	}
-        	
-        	if(!defender.isPlayer()){
-        		SkillsPlayer.get(aplayer).giveExp(wskill, amount);
-        		return false;
-        	}
-        	else
-        	{
-        		Player dplayer = defender.getPlayer();
-            	double dodge = SkillsProperties.Dodge[SkillsPlayer.get(dplayer).getLevel((int)SkillsProperties.Dodge[0])];
-            	if(Math.random() < dodge){
-            		SkillsPlayer.get(dplayer).giveExp((int)SkillsProperties.Dodge[0], 1);
-            		aplayer.sendMessage("Enemy dodged!");
-            		dplayer.sendMessage("You dodge enemy attack!");
-            		return true;
-            	}
-        	}
-            
-        	int wdamage = SkillsProperties.getItemLevel(aplayer.getItemInHand(), wskill);
-        	int wlevel = SkillsPlayer.get(aplayer).getLevel(wskill);
-        	double thit = wdamage * (1 + (wlevel * SkillsProperties.weaponMod));
-        	
-        	Player dplayer = defender.getPlayer();
-        	Inventory inv = dplayer.getInventory();
-        	double def = 0;
-        	for(int slot = 36; slot < 40; slot++){
-        		Item it = inv.getItemFromSlot(slot);
-        		if(it != null){
-        			int id = it.getItemId();
-        			int askill = SkillsProperties.getArmorSkill(id);
-        			if(askill > 0){
-        				SkillsPlayer.get(dplayer).giveExp(askill, 1);
-            			def += SkillsProperties.getItemLevel(id, askill);
-            			int ahit = (int)thit - SkillsPlayer.get(defender.getPlayer()).getLevel(askill);
-            			if(ahit > 0){
-            				if(it.getDamage() + ahit < SkillsProperties.getArmorDurability(id)){
-            					inv.setSlot(id, 1, it.getDamage() + ahit, slot);
-            				}
-            				else
-            				{
-            					inv.removeItem(slot);
-            				}
-            			}
-        			}
-        		}
-        	}
-        	inv.update();
-        	def *= SkillsProperties.armorMod;
-        	
-        	if(thit > def){
-        		SkillsPlayer.get(aplayer).giveExp(wskill, (int)thit - (int)def);
-        		int hp = dplayer.getHealth() - ((int)thit - (int)def);
-        		
-            	lc anim = dplayer.getEntity();
-            	if(hp < 1){
-            		//anim.l.a(anim, (byte)3);
-            		dplayer.setHealth(1);
-            		return false;
-            	}
-            	else
-            	{
-            		anim.l.a(anim, (byte)2);
-            		dplayer.setHealth(hp);
-            	}
-        	}
-        	if(SkillsProperties.debugOn){
-        		aplayer.sendMessage("Hit: "+(double)thit+" Def: "+(double)def);
-        	}
-        	return true;
-    	}
-    	else if(defender.isPlayer()){
-    		Player dplayer = defender.getPlayer();
-        	double dodge = SkillsProperties.Dodge[SkillsPlayer.get(dplayer).getLevel((int)SkillsProperties.Dodge[0])];
-        	if(Math.random() < dodge){
-        		SkillsPlayer.get(dplayer).giveExp((int)SkillsProperties.Dodge[0], 1);
-        		dplayer.sendMessage("You dodge enemy attack!");
-        		return true;
-        	} 
-    	}
-    	return false;
-    }
 }

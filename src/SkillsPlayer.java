@@ -2,6 +2,7 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 public class SkillsPlayer {
+	
 	private static final PropertiesFile playersFile = new PropertiesFile("Skills.txt");
 	private static Hashtable<Player, SkillsPlayer> playersList = new Hashtable<Player, SkillsPlayer>();
 	

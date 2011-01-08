@@ -1,3 +1,4 @@
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
@@ -7,6 +8,7 @@ public class SkillsPlayer {
 	private static Hashtable<Player, SkillsPlayer> playersList = new Hashtable<Player, SkillsPlayer>();
 	
 	private Player player;
+	private Date battleDelay = new Date();
 	private int[] skillExp = new int[100];
 	
 	public static SkillsPlayer get(Player player){
@@ -64,6 +66,18 @@ public class SkillsPlayer {
 		this.player = player;
 	}
 
+	public boolean getDelay(Date date){
+		if(date.getTime() - this.battleDelay.getTime() > 1000){
+			this.battleDelay.setTime(date.getTime());
+			return true;
+		}
+		else
+		{
+			return false;
+		}
+			
+	}
+	
 	public String getName() {
 		return this.player.getName();
 	}

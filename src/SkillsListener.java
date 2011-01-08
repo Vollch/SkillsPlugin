@@ -1,9 +1,15 @@
+import java.util.Date;
+
 public class SkillsListener extends PluginListener {
 	public boolean onAttack(LivingEntity attacker, LivingEntity defender, Integer amount) {
     	if(defender.isPlayer()){
-        	double dodge = SkillsProperties.Dodge[SkillsPlayer.get(defender.getPlayer()).getLevel((int)SkillsProperties.Dodge[0])];
+    		Player dplayer = defender.getPlayer();
+    		if(!SkillsPlayer.get(dplayer).getDelay(new Date())){
+    			return true;
+    		}	
+        	double dodge = SkillsProperties.Dodge[SkillsPlayer.get(dplayer).getLevel((int)SkillsProperties.Dodge[0])];
         	if(Math.random() < dodge){
-        		SkillsPlayer.get(defender.getPlayer()).giveExp((int)SkillsProperties.Dodge[0], 1);
+        		SkillsPlayer.get(dplayer).giveExp((int)SkillsProperties.Dodge[0], 1);
         		defender.getPlayer().sendMessage("You dodge enemy attack!");
         		if(attacker.isPlayer()){
         			attacker.getPlayer().sendMessage("Enemy dodged!");
@@ -18,82 +24,88 @@ public class SkillsListener extends PluginListener {
     	if(!SkillsProperties.combatOn)
     		return false;
     	
-    	if(type == PluginLoader.DamageType.ENTITY && attacker.isPlayer()){
-    		Player aplayer = attacker.getPlayer();
+    	if(type == PluginLoader.DamageType.ENTITY){
+    		Player aplayer = null;
+    		Player dplayer = null;
+    		double hit = 0;
+    		double def = 0;
+    		int wskill = 0;
     		
-    		int wskill = SkillsProperties.getWeaponSkill(aplayer.getItemInHand());
-        	if(wskill == 0){
-        		wskill = SkillsProperties.getWeaponSkill(399);
-        	}
+    		if(attacker.isPlayer()){
+	    		aplayer = attacker.getPlayer();
+	    		wskill = SkillsProperties.getWeaponSkill(aplayer.getItemInHand());
+	        	if(wskill == 0){
+	        		wskill = SkillsProperties.getWeaponSkill(399);
+	        	}
+            	int wdamage = SkillsProperties.getItemLevel(aplayer.getItemInHand(), wskill);
+            	int wlevel = SkillsPlayer.get(aplayer).getLevel(wskill);
+            	hit = wdamage * (1 + (wlevel * SkillsProperties.weaponMod));
+    		}
+    		else
+    		{
+    			hit = amount * SkillsProperties.monsterMod;
+    		}
         	
-        	if(!defender.isPlayer()){
-        		SkillsPlayer.get(aplayer).giveExp(wskill, 2);
-        		return false;
-        	}
- 
-        	int wdamage = SkillsProperties.getItemLevel(aplayer.getItemInHand(), wskill);
-        	int wlevel = SkillsPlayer.get(aplayer).getLevel(wskill);
-        	double thit = wdamage * (1 + (wlevel * SkillsProperties.weaponMod));
-        	
-        	Player dplayer = defender.getPlayer();
-        	Inventory inv = dplayer.getInventory();
-        	double def = 0;
-        	for(int slot = 36; slot < 40; slot++){
-        		Item it = inv.getItemFromSlot(slot);
-        		if(it != null){
-        			int id = it.getItemId();
-        			int askill = SkillsProperties.getArmorSkill(id);
-        			if(askill > 0){
-        				SkillsPlayer.get(dplayer).giveExp(askill, 1);
-            			def += SkillsProperties.getItemLevel(id, askill);
-            			int ahit = (int)thit - SkillsPlayer.get(defender.getPlayer()).getLevel(askill);
-            			if(ahit > 0){
-            				if(it.getDamage() + ahit < SkillsProperties.getArmorDurability(id)){
-            					inv.setSlot(id, 1, it.getDamage() + ahit, slot);
-            				}
-            				else
-            				{
-            					inv.removeItem(slot);
-            				}
+    		if(defender.isPlayer()){
+    			dplayer = defender.getPlayer();
+            	Inventory inv = dplayer.getInventory();
+            	def = 0;
+            	for(int slot = 36; slot < 40; slot++){
+            		Item it = inv.getItemFromSlot(slot);
+            		if(it != null){
+            			int id = it.getItemId();
+            			int askill = SkillsProperties.getArmorSkill(id);
+            			if(askill > 0){
+            				SkillsPlayer.get(dplayer).giveExp(askill, 1);
+                			def += SkillsProperties.getItemLevel(id, askill);
+                			int ahit = (int)hit - SkillsPlayer.get(dplayer).getLevel(askill);
+                			if(ahit > 0){
+                				if(it.getDamage() + ahit < SkillsProperties.getArmorDurability(id)){
+                					inv.setSlot(id, 1, it.getDamage() + ahit, slot);
+                				}
+                				else
+                				{
+                					inv.removeItem(slot);
+                				}
+                			}
             			}
-        			}
-        		}
+            		}
+            	}
+            	inv.update();
+            	def *= SkillsProperties.armorMod;
+    		}
+    		else
+    		{
+    			hit /= 2;
+    			def = 0;
+    		}
+    		
+        	if(SkillsProperties.debugOn && aplayer != null){
+        		aplayer.sendMessage("Hit: "+(double)hit+" Def: "+(double)def);
         	}
-        	inv.update();
-        	def *= SkillsProperties.armorMod;
+        	if(SkillsProperties.debugOn && dplayer != null){
+        		dplayer.sendMessage("Def: "+(double)def+" Hit: "+(double)hit);
+        	}
         	
-        	if(thit > def){
-        		SkillsPlayer.get(aplayer).giveExp(wskill, (int)thit - (int)def);
-        		int hp = dplayer.getHealth() - ((int)thit - (int)def);
+    		int dmg = (int)hit - (int)def;       	
+        	if(dmg > 0){
+        		if(attacker.isPlayer()){
+        			SkillsPlayer.get(aplayer).giveExp(wskill, dmg);
+        		}
+        		int hp = ((LivingEntity)defender).getHealth() - dmg;
         		
             	if(hp < 1){
-            		dplayer.setHealth(1);
+            		((LivingEntity)defender).setHealth(1);
             		return false;
             	}
             	else
             	{
-            		lc anim = dplayer.getEntity();
-            		anim.l.a(anim, (byte)2);
-            		dplayer.setHealth(hp);
+            		lc dlc = ((LivingEntity)defender).getEntity();
+            		dlc.l.a(dlc, (byte)2);
+            		((LivingEntity)defender).setHealth(hp);
+            		return true; 	
             	}
         	}
-        	if(SkillsProperties.debugOn){
-        		aplayer.sendMessage("Hit: "+(double)thit+" Def: "+(double)def);
-        	}
-        	return true;
-    	}
-    	if(defender.isPlayer()){
-    		Player dplayer = defender.getPlayer();
-    		if(dplayer.getHealth() > amount){
-    			dplayer.setHealth(dplayer.getHealth() - amount);
-    			lc anim = dplayer.getEntity();
-        		anim.l.a(anim, (byte)2);
-    			return true;
-    		}
-    		else{
-    			dplayer.setHealth(1);
-    			return false;
-    		}
     	}
     	return false;
     }

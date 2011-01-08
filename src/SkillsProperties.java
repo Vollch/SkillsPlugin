@@ -21,6 +21,7 @@ public class SkillsProperties {
 	public static boolean combatOn;
 	public static double weaponMod;
 	public static double armorMod;
+	public static double monsterMod;
 
 	public static boolean loadConfig() {
 		try {
@@ -33,6 +34,7 @@ public class SkillsProperties {
 			saveTimer = propertiesFile.getInt("saveTimer");
 			weaponMod = propertiesFile.getDouble("weaponMod");
 			armorMod = propertiesFile.getDouble("armorMod");
+			monsterMod = propertiesFile.getDouble("monsterMod");
 			BaseDurability = propertiesFile.getInt("BaseDurability");
 			
 			if(!propertiesFile.containsKey("Durability"))

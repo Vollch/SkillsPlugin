@@ -4,6 +4,9 @@ import java.util.Random;
 
 public class SkillsListener extends PluginListener {
 	public boolean onAttack(LivingEntity attacker, LivingEntity defender, Integer amount) {
+		if(attacker.getHealth() < 1)
+			return true;
+		
     	if(defender.isPlayer()){
     		Player dplayer = defender.getPlayer();
     		if(SkillsPlayer.get(dplayer).getTimer() < 1000){
@@ -99,10 +102,10 @@ public class SkillsListener extends PluginListener {
     		}
     		
         	if(SkillsProperties.debugOn && aplayer != null){
-        		aplayer.sendMessage("Hit: "+(double)hit+" Def: "+(double)def);
+        		aplayer.sendMessage("Hit: "+(double)hit+" Def: "+(double)def+" From:"+defender.toString());
         	}
         	if(SkillsProperties.debugOn && dplayer != null){
-        		dplayer.sendMessage("Def: "+(double)def+" Hit: "+(double)hit);
+        		dplayer.sendMessage("Def: "+(double)def+" Hit: "+(double)hit+" From:"+attacker.toString());
         	}
         	
     		int dmg = (int)hit - (int)def;       	

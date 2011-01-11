@@ -137,7 +137,7 @@ public class SkillsListener extends PluginListener {
     	    		}
                		lc dlc = ((LivingEntity)defender).getEntity();
             		dlc.l.a(dlc, (byte)3);
-            		((LivingEntity)defender).setHealth(0);
+            		((LivingEntity)defender).setHealth(-1);
     	    	}
         	}
         	return true;
@@ -250,7 +250,7 @@ public class SkillsListener extends PluginListener {
     	    		}
                		lc dlc = le.getEntity();
             		dlc.l.a(dlc, (byte)3);
-            		le.setHealth(0);
+            		le.setHealth(-1);
     	    	}
     	    }
     	}

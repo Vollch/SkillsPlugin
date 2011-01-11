@@ -8,7 +8,7 @@ public class SkillsPlayer {
 	private static Hashtable<Player, SkillsPlayer> playersList = new Hashtable<Player, SkillsPlayer>();
 	
 	private Player player;
-	private Date battleDelay;
+	private Date battleDelay = new Date(0);
 	private int[] skillExp = new int[100];
 	private int[] skillLevel = new int[100];
 	
@@ -79,10 +79,7 @@ public class SkillsPlayer {
 	}
 
 	public long getTimer(){
-		if(this.battleDelay == null)
-			return 3600000;
-		else
-			return new Date().getTime() - this.battleDelay.getTime();
+		return new Date().getTime() - this.battleDelay.getTime();
 	}
 	
 	public void resetTimer(){

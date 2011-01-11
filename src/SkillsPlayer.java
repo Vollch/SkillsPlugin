@@ -8,8 +8,9 @@ public class SkillsPlayer {
 	private static Hashtable<Player, SkillsPlayer> playersList = new Hashtable<Player, SkillsPlayer>();
 	
 	private Player player;
-	private Date battleDelay = new Date();
+	private Date battleDelay;
 	private int[] skillExp = new int[100];
+	private int[] skillLevel = new int[100];
 	
 	public static SkillsPlayer get(Player player){
 		if(playersList.containsKey(player)) {
@@ -57,25 +58,35 @@ public class SkillsPlayer {
 	private SkillsPlayer(Player player, String skills) {
 		this.player = player;
 		String[] s = skills.split(":");
-		for(int i = 0; i < s.length; i++) {
-			this.skillExp[i+1] = Integer.parseInt(s[i]);
+		for(int skill = 0; skill < s.length; skill++) {
+			this.skillExp[skill+1] = Integer.parseInt(s[skill]);
+		}
+		for(int skill = 1; skill < SkillsProperties.Skills.length; skill++){
+			for(int level = 15; level > 0; level--) {
+				if(skillExp[skill] >= SkillsProperties.getExpForLevel(level, skill)){
+					this.skillLevel[skill] = level;
+					break;
+				}
+			}
 		}
 	}
 
 	private SkillsPlayer(Player player) {
 		this.player = player;
+		for(int i = 1; i < SkillsProperties.Skills.length; i++){
+			this.skillLevel[i] = 1;
+		}
 	}
 
-	public boolean getDelay(Date date){
-		if(date.getTime() - this.battleDelay.getTime() > 1000){
-			this.battleDelay.setTime(date.getTime());
-			return true;
-		}
+	public long getTimer(){
+		if(this.battleDelay == null)
+			return 3600000;
 		else
-		{
-			return false;
-		}
-			
+			return new Date().getTime() - this.battleDelay.getTime();
+	}
+	
+	public void resetTimer(){
+		this.battleDelay.setTime(new Date().getTime());
 	}
 	
 	public String getName() {
@@ -83,7 +94,7 @@ public class SkillsPlayer {
 	}
 
 	public int getLevel(int skill) {
-		return SkillsProperties.getLevelFromExp(this.skillExp[skill], skill);
+		return this.skillLevel[skill];
 	}
 
 	public int getExp(int skill) {
@@ -95,14 +106,13 @@ public class SkillsPlayer {
 	}
 	
 	public void giveExp(int skill, int value) {
-		int before = this.getLevel(skill);
-		if(this.skillExp[skill] + value < 0){
+		if(this.skillExp[skill] + value < 0)
 			this.skillExp[skill] = 0;
-		}
-		else {
+		else 
 			this.skillExp[skill] += value;
-		}
-		if(this.getLevel(skill) != before) {
+		
+		if(this.skillLevel[skill] < 15 && this.skillExp[skill] >= SkillsProperties.getExpForLevel(this.skillLevel[skill]+1, skill)) {
+			this.skillLevel[skill]++;
 			this.player.sendMessage("Congratulations! You are " + SkillsProperties.getRangForLevel(this.getLevel(skill), skill) + " " + SkillsProperties.Skills[skill] + "!");
 		}
 	}

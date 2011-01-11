@@ -153,23 +153,51 @@ public class SkillsProperties {
 		}
 	}
 
-//	public void defaultConfig() {
-//		try {
-//			PropertiesFile props = new PropertiesFile("Skills.properties");
-//			props = new PropertiesFile("Skills.properties");
-//			props.load();
-//			props.setBoolean("debug", true);
-//			props.setBoolean("combat", true);
-//			props.setInt("base-durability", 1);
-//			props.setInt("to-broke", 5);
-//			props.setInt("save-timer", 30000);
-//			props.setDouble("weapon-mod", 0.3);
-//			props.setDouble("armor-mod", 1);
-//			props.save();
-//		}
-//		catch(Exception e) {}
-//	}
-//  TODO: Nuff said.
+	public static boolean defaultConfig() {
+		try {
+			propertiesFile.load();
+			propertiesFile.setString("debugOn", "false");
+			propertiesFile.setString("combatOn", "true");
+			propertiesFile.setString("toBroke", "5");
+			propertiesFile.setString("saveTimer", "30000");
+			propertiesFile.setString("weaponMod", "0.3");
+			propertiesFile.setString("armorMod", "1");
+			propertiesFile.setString("monsterMod", "5");
+			propertiesFile.setString("BaseDurability", "1");
+			propertiesFile.setString("Durability", "1-2,2-2,3-2,4-2,5-2,12-2,13-4,14-7,15-3,16-2,17-2,41-2,42-7,43-3,44-3,45-6,47-3,48-6,49-10,56-13,57-15,73-6,74-6,78-2,80-3,82-3,87-10,88-10,89-10,91-9");
+			propertiesFile.setString("SkillNames", "Miner,Mason,Woodcutter,Carpenter,Gemcutter,Metalcrafter,Hauler,Wrestler,Axeman,Swordsman,Bowman,Armoruser,Dodger");
+			propertiesFile.setString("BaseExp", "0,200,450,750,1100,1500,1950,2450,3000,3600,4250,4950,5700,6500,7350");
+			propertiesFile.setString("BaseRang", "BaseRang=Novice,Adequate,Competent,Skilled,Proficient,Talented,Adept,Expert,Professional,Accomplished,Great,Master,High Master,Grand Master,Legendary");
+			propertiesFile.setString("MinerDestroy", "1,4,43,44,45,48,49,67,87,89");
+			propertiesFile.setString("MinerTools", "278-3,257-2,274-1,270-1,285-1");
+			propertiesFile.setString("MinerExp", "0,200,600,1400,2400,3600,4800,6400,8200,10200,12400,14800,17400,20200,23200");
+			propertiesFile.setString("MinerRang", "Novice,Adequate,Competent,Skilled,Proficient,Talented,Adept,Expert,Professional,Accomplished,Great,Master,High Master,Grand Master,Crazy");
+			propertiesFile.setString("MasonCreate", "1,4,43,44,45,48,49,67,87,89");
+			propertiesFile.setString("WoodcutterDestroy", "5,17,47,53,63,68,85,91");
+			propertiesFile.setString("WoodcutterTools", "279-3,258-2,275-1,271-1,286-1");
+			propertiesFile.setString("CarpenterCreate", "5,17,47,53,63,68,85");
+			propertiesFile.setString("GemcutterDestroy", "14,15,16,20,41,42,56,57,73,74");
+			propertiesFile.setString("GemcutterCreate", "20");
+			propertiesFile.setString("GemcutterTools", "278-3,257-2,274-1,270-1,285-1");
+			propertiesFile.setString("MetalcrafterCreate", "41,42,57");
+			propertiesFile.setString("HaulerDestroy", "2,3,12,13,35,60,78,80,82,88");
+			propertiesFile.setString("HaulerCreate", "2,3,12,13,35,60,78,80,82,88");
+			propertiesFile.setString("HaulerTools", "277-3,256-2,273-1,269-1,284-1");
+			propertiesFile.setString("HaulerExp", "0,300,700,1200,1800,2500,3300,4200,5200,6300,7500,8800,10200,11700,13300");
+			propertiesFile.setString("WrestlerWeapon", "399-2");
+			propertiesFile.setString("AxemanWeapon", "271-1,286-2,275-3,258-4,279-6");
+			propertiesFile.setString("SwordsmanWeapon", "268-2,283-3,272-4,267-5,276-7");
+			propertiesFile.setString("BowmanWeapon", "261-2");
+			propertiesFile.setString("ArmoruserArmor", "298-34-3,299-48-3,300-46-3,301-40-3,302-67-4,303-96-4,304-92-4,305-79-4,306-136-5,307-192-5,308-184-5,309-160-5,310-272-7,311-384-7,312-368-7,313-320-7,314-68-4,315-96-4,316-92-4,317-80-4");
+			propertiesFile.setString("DodgerDodge", "0.02,0.04,0.06,0.08,0.10,0.12,0.14,0.16,0.18,0.20,0.22,0.24,0.26,0.28,0.30");
+			propertiesFile.setString("DodgerExp", "0,30,120,300,570,950,1440,2050,2810,3720,4800,6050,7480,9120,10970");
+			propertiesFile.save();
+			return true;
+		}
+		catch(Exception e) {
+			return false;
+		}
+	}
 	
 	public static int getDestroySkill(int block) {
 		return DestroySkill[block];
@@ -198,6 +226,9 @@ public class SkillsProperties {
 	}
 	
 	public static int getBlockDurability(Block block) {
+		if(getDestroySkill(block.getType()) == 0){
+			return 1;
+		}
 		int durability = block.getData();
 		if(durability == 0) {
 			if(Durability[block.getType()] > 0) {
@@ -213,14 +244,6 @@ public class SkillsProperties {
 	
 	public static int getArmorDurability(int item) {
 		return ArmorDurability[item];
-	}
-
-	public static int getLevelFromExp(int expirence, int skill) {
-		for(int i = 15; i > 0; i--) {
-			if(expirence >= SkillExp[skill][i])
-				return i;
-		}
-		return 0;
 	}
 	
 	public static int getExpForLevel(int level, int skill) {

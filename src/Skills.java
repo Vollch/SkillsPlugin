@@ -6,20 +6,23 @@ public class Skills extends Plugin {
 	private static final SkillsListener listener = new SkillsListener();
 	private static final Timer timer = new Timer();
 	public static final String name = "Skills";
-	public static final String version = "0.5";
+	public static final String version = "0.6";
 	
 	public void initialize() {
 		if(!SkillsProperties.loadConfig()){
-			log.warning("Can't load properties!");
-			//TODO: Here should be load of default config... But it still balancing, and im too lazy to rewrite default function every time...
-			return;
+			log.warning("An error has occurred during loading properties! Load default.");
+			SkillsProperties.defaultConfig();
+			if(!SkillsProperties.loadConfig()){
+				log.warning("An error has occurred during loading default properties! Stopping.");
+				return;
+			}
 		}
 		timer.scheduleAtFixedRate(new SkillsTimer(), 0L, SkillsProperties.saveTimer);
-		etc.getLoader().addListener(PluginLoader.Hook.ATTACK, listener, this, PluginListener.Priority.HIGH);
-		etc.getLoader().addListener(PluginLoader.Hook.DAMAGE, listener, this, PluginListener.Priority.HIGH);
+		etc.getLoader().addListener(PluginLoader.Hook.ATTACK, listener, this, PluginListener.Priority.LOW);
+		etc.getLoader().addListener(PluginLoader.Hook.DAMAGE, listener, this, PluginListener.Priority.LOW);
 		etc.getLoader().addListener(PluginLoader.Hook.BLOCK_BROKEN, listener, this, PluginListener.Priority.LOW);
 		etc.getLoader().addListener(PluginLoader.Hook.BLOCK_PLACE, listener, this, PluginListener.Priority.LOW);
-		etc.getLoader().addListener(PluginLoader.Hook.COMMAND, listener, this, PluginListener.Priority.LOW);
+		etc.getLoader().addListener(PluginLoader.Hook.COMMAND, listener, this, PluginListener.Priority.HIGH);
 		etc.getLoader().addListener(PluginLoader.Hook.EXPLODE, listener, this, PluginListener.Priority.LOW);
 		etc.getLoader().addListener(PluginLoader.Hook.SERVERCOMMAND, listener, this, PluginListener.Priority.LOW);
 		log.info(name + " " + version + " initialized");

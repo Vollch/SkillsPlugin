@@ -120,27 +120,15 @@ public class SkillsListener extends PluginListener {
             		lc dlc = ((LivingEntity)defender).getEntity();
             		dlc.l.a(dlc, (byte)2);
             		((LivingEntity)defender).setHealth(hp);
+            		return true;
     	    	}
-    	    	else{
-    	    		if(defender.isPlayer()){
-    	    			dplayer = defender.getPlayer();
-    	            	Inventory inv = dplayer.getInventory();
-    	    			for(int i = 0; i < 40; i++)
-    	    			{
-    	    				if(inv.getItemFromSlot(i) != null){
-    	    					etc.getServer().dropItem(dplayer.getX(), dplayer.getY(), dplayer.getZ(), inv.getItemFromSlot(i).getItemId(), inv.getItemFromSlot(i).getAmount());
-    	    					inv.removeItem(i);
-    	    				}
-    	    			}
-    	    			inv.update();
-    	    			SkillsPlayer.get(dplayer).resetTimer();
-    	    		}
-               		lc dlc = ((LivingEntity)defender).getEntity();
-            		dlc.l.a(dlc, (byte)3);
-            		((LivingEntity)defender).setHealth(-1);
+    	    	else
+    	    	{
+    	    		((LivingEntity)defender).setHealth(1);
+                	return false;
+    	    		
     	    	}
-        	}
-        	return true;
+        	}	
     	}
     	return false;
     }

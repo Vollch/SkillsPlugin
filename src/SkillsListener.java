@@ -124,6 +124,9 @@ public class SkillsListener extends PluginListener {
     	    	}
     	    	else
     	    	{
+    	    		if(defender.isPlayer()){
+    	    			SkillsPlayer.get(dplayer).resetTimer();
+    	    		}
     	    		((LivingEntity)defender).setHealth(1);
                 	return false;
     	    		

@@ -173,9 +173,9 @@ public class SkillsProperties {
 			propertiesFile.setString("MinerExp", "0,200,600,1400,2400,3600,4800,6400,8200,10200,12400,14800,17400,20200,23200");
 			propertiesFile.setString("MinerRang", "Novice,Adequate,Competent,Skilled,Proficient,Talented,Adept,Expert,Professional,Accomplished,Great,Master,High Master,Grand Master,Crazy");
 			propertiesFile.setString("MasonCreate", "1,4,43,44,45,48,49,67,87,89");
-			propertiesFile.setString("WoodcutterDestroy", "5,17,47,53,63,68,85,91");
+			propertiesFile.setString("WoodcutterDestroy", "5,17,47,53,85");
 			propertiesFile.setString("WoodcutterTools", "279-3,258-2,275-1,271-1,286-1");
-			propertiesFile.setString("CarpenterCreate", "5,17,47,53,63,68,85");
+			propertiesFile.setString("CarpenterCreate", "5,17,47,53,85");
 			propertiesFile.setString("GemcutterDestroy", "14,15,16,20,41,42,56,57,73,74");
 			propertiesFile.setString("GemcutterCreate", "20");
 			propertiesFile.setString("GemcutterTools", "278-3,257-2,274-1,270-1,285-1");

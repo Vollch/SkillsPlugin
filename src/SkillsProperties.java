@@ -19,6 +19,8 @@ public class SkillsProperties {
 	public static int saveTimer;
 	public static boolean debugOn;
 	public static boolean combatOn;
+	public static boolean explosionOn;
+	public static double explosionDrop;
 	public static double weaponMod;
 	public static double armorMod;
 	public static double monsterMod;
@@ -28,14 +30,16 @@ public class SkillsProperties {
 			String[] temp;
 			String[] temp2;
 			propertiesFile.load();
-			debugOn = propertiesFile.getBoolean("debugOn");
-			combatOn = propertiesFile.getBoolean("combatOn");
-			toBroke = propertiesFile.getInt("toBroke");
-			saveTimer = propertiesFile.getInt("saveTimer");
-			weaponMod = propertiesFile.getDouble("weaponMod");
-			armorMod = propertiesFile.getDouble("armorMod");
-			monsterMod = propertiesFile.getDouble("monsterMod");
-			BaseDurability = propertiesFile.getInt("BaseDurability");
+			debugOn = propertiesFile.getBoolean("debugOn", false);
+			combatOn = propertiesFile.getBoolean("combatOn", true);
+			explosionOn = propertiesFile.getBoolean("explosionOn", true);
+			toBroke = propertiesFile.getInt("toBroke", 5);
+			saveTimer = propertiesFile.getInt("saveTimer", 30000);
+			weaponMod = propertiesFile.getDouble("weaponMod", 0.3);
+			armorMod = propertiesFile.getDouble("armorMod", 1);
+			monsterMod = propertiesFile.getDouble("monsterMod", 5);
+			explosionDrop = propertiesFile.getDouble("explosionDrop", 1);
+			BaseDurability = propertiesFile.getInt("BaseDurability", 1);
 			
 			if(!propertiesFile.containsKey("Durability"))
 				return false;
@@ -158,11 +162,13 @@ public class SkillsProperties {
 			propertiesFile.load();
 			propertiesFile.setString("debugOn", "false");
 			propertiesFile.setString("combatOn", "true");
+			propertiesFile.setString("explosionOn", "true");
 			propertiesFile.setString("toBroke", "5");
 			propertiesFile.setString("saveTimer", "30000");
 			propertiesFile.setString("weaponMod", "0.3");
 			propertiesFile.setString("armorMod", "1");
 			propertiesFile.setString("monsterMod", "5");
+			propertiesFile.setString("explosionDrop", "1");
 			propertiesFile.setString("BaseDurability", "1");
 			propertiesFile.setString("Durability", "1-2,2-2,3-2,4-2,5-2,12-2,13-4,14-7,15-3,16-2,17-2,41-2,42-7,43-3,44-3,45-6,47-3,48-6,49-10,56-13,57-15,73-6,74-6,78-2,80-3,82-3,87-10,88-10,89-10,91-9");
 			propertiesFile.setString("SkillNames", "Miner,Mason,Woodcutter,Carpenter,Gemcutter,Metalcrafter,Hauler,Wrestler,Axeman,Swordsman,Bowman,Armoruser,Dodger");

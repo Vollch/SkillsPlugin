@@ -6,7 +6,7 @@ public class Skills extends Plugin {
 	private static final SkillsListener listener = new SkillsListener();
 	private static final Timer timer = new Timer();
 	public static final String name = "Skills";
-	public static final String version = "0.602";
+	public static final String version = "0.603";
 	
 	public void initialize() {
 		if(!SkillsProperties.loadConfig()){

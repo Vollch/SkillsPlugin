@@ -13,7 +13,7 @@ public class SkillsListener extends PluginListener {
     			return true;
     		}	
         	double dodge = SkillsProperties.Dodge[SkillsPlayer.get(dplayer).getLevel((int)SkillsProperties.Dodge[0])];
-        	if(Math.random() < dodge){
+        	if(dodge >= Math.random()){
         		SkillsPlayer.get(dplayer).giveExp((int)SkillsProperties.Dodge[0], 1);
         		defender.getPlayer().sendMessage("You dodge enemy attack!");
         		if(attacker.isPlayer()){
@@ -21,7 +21,6 @@ public class SkillsListener extends PluginListener {
         		}
         		return true;
         	} 
-        	SkillsPlayer.get(dplayer).resetTimer();
     	}
     	return false;
     }
@@ -62,6 +61,7 @@ public class SkillsListener extends PluginListener {
         	
     		if(defender.isPlayer()){
     			dplayer = defender.getPlayer();
+    			SkillsPlayer.get(dplayer).resetTimer();
             	Inventory inv = dplayer.getInventory();
             	def = 0;
             	for(int slot = 36; slot < 40; slot++){
@@ -137,6 +137,9 @@ public class SkillsListener extends PluginListener {
     }
     
     public boolean onExplode(Block center) {
+    	if(!SkillsProperties.explosionOn)
+    		return false;
+    	
     	HashSet<Block> list = new HashSet<Block>();
     	double mod = 0;
     	if(center.getStatus() == 1){
@@ -202,7 +205,9 @@ public class SkillsListener extends PluginListener {
         	    durability -= mod * 2 - Math.sqrt(x + y + z);
         	    if(durability < 1){
         	    	if(gv.m[block.getType()].a(rand) > 0){
-        	    		etc.getServer().dropItem(block.getX(), block.getY(), block.getZ(), gv.m[block.getType()].a(0, rand), gv.m[block.getType()].a(rand));
+        	    		if(SkillsProperties.explosionDrop >= Math.random()){
+            	    		etc.getServer().dropItem(block.getX(), block.getY(), block.getZ(), gv.m[block.getType()].a(0, rand), gv.m[block.getType()].a(rand));
+        	    		}
         	    	}
         	    	block.setType(0);
         	    	block.update();
@@ -222,8 +227,7 @@ public class SkillsListener extends PluginListener {
     	    if(dist < mod * 4){
     	    	int hp = le.getHealth() - (int)(mod * 10 - dist * 3);
     	    	if(hp > 0){    		
-            		lc dlc = le.getEntity();
-            		dlc.l.a(dlc, (byte)2);
+            		le.getEntity().l.a(le.getEntity(), (byte)2);
             		le.setHealth(hp);
     	    	}
     	    	else{
@@ -237,11 +241,10 @@ public class SkillsListener extends PluginListener {
     	    			    }
     	    			}
     	    			inv.update();
-    	    			SkillsPlayer.get(le.getPlayer()).resetTimer();
+    	    			SkillsPlayer.get(le.getPlayer()).stopTimer();
     	    		}
-               		lc dlc = le.getEntity();
-            		dlc.l.a(dlc, (byte)3);
-            		le.setHealth(-1);
+               		le.getEntity().l.a(le.getEntity(), (byte)3);
+            		le.setHealth(0);
     	    	}
     	    }
     	}

@@ -125,7 +125,7 @@ public class SkillsListener extends PluginListener {
     	    	else
     	    	{
     	    		if(defender.isPlayer()){
-    	    			SkillsPlayer.get(defender.getPlayer()).resetTimer();
+    	    			SkillsPlayer.get(defender.getPlayer()).stopTimer();
     	    		}
     	    		((LivingEntity)defender).setHealth(1);
                 	return false;
@@ -305,6 +305,10 @@ public class SkillsListener extends PluginListener {
     			return true;
     		}	
 		}
+		else if(split[0].equalsIgnoreCase("/skillsversion") || split[0].equalsIgnoreCase("/skillsversion")) {	
+    		player.sendMessage(Skills.name + " " + Skills.version);
+    		return true;
+		}
 		else if(split[0].equalsIgnoreCase("/skillinfo") && player.canUseCommand("/skillinfo")) {	
 			if(split.length > 1){
 				int skill = 0;
@@ -394,6 +398,7 @@ public class SkillsListener extends PluginListener {
 				SkillsPlayer sp = SkillsPlayer.get(p);
 				for(int i = 1; i < SkillsProperties.Skills.length; i++) {
 					sp.setExp(i, 0);
+					sp.setLevel(i, 1);
 				}
 				player.sendMessage("Done!");
 				return true;

@@ -3,7 +3,6 @@ import java.util.Enumeration;
 import java.util.Hashtable;
 
 public class SkillsPlayer {
-	
 	private static final PropertiesFile playersFile = new PropertiesFile("Skills.txt");
 	private static Hashtable<Player, SkillsPlayer> playersList = new Hashtable<Player, SkillsPlayer>();
 	
@@ -86,6 +85,10 @@ public class SkillsPlayer {
 		this.battleDelay.setTime(new Date().getTime());
 	}
 	
+	public void stopTimer(){
+		this.battleDelay.setTime(0);
+	}
+	
 	public String getName() {
 		return this.player.getName();
 	}
@@ -94,6 +97,10 @@ public class SkillsPlayer {
 		return this.skillLevel[skill];
 	}
 
+	public void setLevel(int skill, int value) {
+		this.skillLevel[skill] = value;
+	}
+	
 	public int getExp(int skill) {
 		return this.skillExp[skill];
 	}
@@ -110,6 +117,7 @@ public class SkillsPlayer {
 		
 		if(this.skillLevel[skill] < 15 && this.skillExp[skill] >= SkillsProperties.getExpForLevel(this.skillLevel[skill]+1, skill)) {
 			this.skillLevel[skill]++;
+			
 			this.player.sendMessage("Congratulations! You are " + SkillsProperties.getRangForLevel(this.getLevel(skill), skill) + " " + SkillsProperties.Skills[skill] + "!");
 		}
 	}

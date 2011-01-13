@@ -6,7 +6,7 @@ public class Skills extends Plugin {
 	private static final SkillsListener listener = new SkillsListener();
 	private static final Timer timer = new Timer();
 	public static final String name = "Skills";
-	public static final String version = "0.601";
+	public static final String version = "0.602";
 	
 	public void initialize() {
 		if(!SkillsProperties.loadConfig()){
@@ -31,6 +31,7 @@ public class Skills extends Plugin {
 	public void enable() {
 		etc.getInstance().addCommand("/skills", "- Shows your skills level and experience.");
 		etc.getInstance().addCommand("/skillinfo", "- Shows skill informaton.");
+		etc.getInstance().addCommand("/skillsversion", "- Shows Skills plugin version.");
 		etc.getInstance().addCommand("/giveexp", "- Give experience to player.");
 		etc.getInstance().addCommand("/reset", "- Reset all skills to first level.");
 		etc.getInstance().addCommand("/setmods", "- Set armors and weapons modifiers.");
@@ -41,6 +42,7 @@ public class Skills extends Plugin {
 	public void disable() {
 		etc.getInstance().removeCommand("/skills");
 		etc.getInstance().removeCommand("/skillinfo");
+		etc.getInstance().removeCommand("/skillsversion");
 		etc.getInstance().removeCommand("/giveexp");
 		etc.getInstance().removeCommand("/reset");
 		etc.getInstance().removeCommand("/setmods");

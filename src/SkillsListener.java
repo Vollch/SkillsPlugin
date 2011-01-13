@@ -1,8 +1,11 @@
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
+import java.util.logging.Logger;
 
 public class SkillsListener extends PluginListener {
+	private static final Logger log = Logger.getLogger("Minecraft");
+	
 	public boolean onAttack(LivingEntity attacker, LivingEntity defender, Integer amount) {
 		if(attacker.getHealth() < 1)
 			return true;
@@ -251,7 +254,7 @@ public class SkillsListener extends PluginListener {
 		if(SkillsProperties.debugOn){
 			player.sendMessage("Skill - " + Integer.toString(sp.getLevel(skill)) + " Tool - " + Integer.toString(tool) + " Dura - " + Integer.toString(durability));
 		}
-		if(durability - sp.getLevel(skill) - tool > SkillsProperties.toBroke) {
+		if(durability - (sp.getLevel(skill) + tool) > SkillsProperties.toBroke) {
 			player.sendMessage("This block is too hard for you!");
 		}
 		else {
@@ -286,7 +289,9 @@ public class SkillsListener extends PluginListener {
 	{
 	      if (split[0].equalsIgnoreCase("stop"))
 	      {
-	         SkillsPlayer.save();
+	         if(!SkillsPlayer.save()){
+	        	log.warning("Something wrong! Can't save skill!");
+	         }
 	      }
 	      return false;
 	}

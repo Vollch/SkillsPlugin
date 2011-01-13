@@ -41,14 +41,14 @@ public class SkillsProperties {
 			explosionDrop = propertiesFile.getDouble("explosionDrop", 1);
 			BaseDurability = propertiesFile.getInt("BaseDurability", 1);
 			
-			if(!propertiesFile.containsKey("Durability"))
-				return false;
-			temp = propertiesFile.getString("Durability").split(",");
-			for(String str : temp) {
+			if(propertiesFile.containsKey("Durability")){
+				temp = propertiesFile.getString("Durability").split(",");
+				for(String str : temp) {
 				temp2 = str.split("-");
 				Durability[Integer.parseInt(temp2[0])] = Integer.parseInt(temp2[1]);
+				}
 			}
-		
+			
 			if(!propertiesFile.containsKey("BaseExp"))
 				return false;
 			temp = propertiesFile.getString("BaseExp").split(",");

@@ -120,7 +120,6 @@ public class SkillsListener extends PluginListener {
             		lc dlc = ((LivingEntity)defender).getEntity();
             		dlc.l.a(dlc, (byte)2);
             		((LivingEntity)defender).setHealth(hp);
-            		return true;
     	    	}
     	    	else
     	    	{
@@ -128,10 +127,10 @@ public class SkillsListener extends PluginListener {
     	    			SkillsPlayer.get(defender.getPlayer()).stopTimer();
     	    		}
     	    		((LivingEntity)defender).setHealth(1);
-                	return false;
-    	    		
+    	    		((LivingEntity)defender).getEntity().a(null, 5);
     	    	}
-        	}	
+        	}
+        	return true;
     	}
     	return false;
     }
@@ -225,26 +224,17 @@ public class SkillsListener extends PluginListener {
     	    double z = Math.pow(center.getZ() - le.getZ(), 2);
     	    double dist = Math.sqrt(x + y + z);
     	    if(dist < mod * 4){
-    	    	int hp = le.getHealth() - (int)(mod * 10 - dist * 3);
+    	    	int hp = le.getHealth() - (int)(mod * 15 - dist * 3);
     	    	if(hp > 0){    		
             		le.getEntity().l.a(le.getEntity(), (byte)2);
             		le.setHealth(hp);
     	    	}
     	    	else{
     	    		if(le.isPlayer()){
-    	    			Inventory inv = le.getPlayer().getInventory();
-    	    			for(int i = 0; i < 40; i++)
-    	    			{
-    	    			    if(inv.getItemFromSlot(i) != null){
-    	    			    	etc.getServer().dropItem(le.getPlayer().getX(), le.getPlayer().getY(), le.getPlayer().getZ(), inv.getItemFromSlot(i).getItemId(), inv.getItemFromSlot(i).getAmount());
-        	    			    inv.removeItem(i);
-    	    			    }
-    	    			}
-    	    			inv.update();
     	    			SkillsPlayer.get(le.getPlayer()).stopTimer();
     	    		}
-               		le.getEntity().l.a(le.getEntity(), (byte)3);
-            		le.setHealth(0);
+            		le.setHealth(1);
+            		le.getEntity().a(null, 5);
     	    	}
     	    }
     	}

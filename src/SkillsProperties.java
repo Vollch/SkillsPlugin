@@ -1,6 +1,5 @@
 public class SkillsProperties {
 	private static final PropertiesFile propertiesFile = new PropertiesFile("Skills.properties");
-	private static int BaseDurability;
 	private static int[] Durability = new int[100];
 	private static int[] DestroySkill = new int[100];
 	private static int[] CreateSkill = new int[100];
@@ -20,6 +19,8 @@ public class SkillsProperties {
 	public static boolean debugOn;
 	public static boolean combatOn;
 	public static boolean explosionOn;
+	public static boolean levelDependentCreatyGain;
+	public static boolean levelDependentDestroyGain;
 	public static double explosionDrop;
 	public static double weaponMod;
 	public static double armorMod;
@@ -33,13 +34,14 @@ public class SkillsProperties {
 			debugOn = propertiesFile.getBoolean("debugOn", false);
 			combatOn = propertiesFile.getBoolean("combatOn", true);
 			explosionOn = propertiesFile.getBoolean("explosionOn", true);
+			levelDependentCreatyGain = propertiesFile.getBoolean("levelDependentCreatyGain", false);
+			levelDependentDestroyGain = propertiesFile.getBoolean("levelDependentDestroyGain", false);
 			toBroke = propertiesFile.getInt("toBroke", 5);
 			saveTimer = propertiesFile.getInt("saveTimer", 30000);
 			weaponMod = propertiesFile.getDouble("weaponMod", 0.3);
 			armorMod = propertiesFile.getDouble("armorMod", 1);
 			monsterMod = propertiesFile.getDouble("monsterMod", 5);
 			explosionDrop = propertiesFile.getDouble("explosionDrop", 1);
-			BaseDurability = propertiesFile.getInt("BaseDurability", 1);
 			
 			if(propertiesFile.containsKey("Durability")){
 				temp = propertiesFile.getString("Durability").split(",");
@@ -153,6 +155,7 @@ public class SkillsProperties {
 			return true;
 		}
 		catch(Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -163,33 +166,36 @@ public class SkillsProperties {
 			propertiesFile.setString("debugOn", "false");
 			propertiesFile.setString("combatOn", "true");
 			propertiesFile.setString("explosionOn", "true");
-			propertiesFile.setString("toBroke", "5");
+			propertiesFile.setString("levelDependentCreatyGain", "false");
+			propertiesFile.setString("levelDependentDestroyGain", "false");
+			propertiesFile.setString("toBroke", "3");
 			propertiesFile.setString("saveTimer", "30000");
 			propertiesFile.setString("weaponMod", "0.3");
 			propertiesFile.setString("armorMod", "1");
 			propertiesFile.setString("monsterMod", "5");
 			propertiesFile.setString("explosionDrop", "1");
-			propertiesFile.setString("BaseDurability", "1");
-			propertiesFile.setString("Durability", "1-2,2-2,3-2,4-2,5-2,12-2,13-4,14-7,15-3,16-2,17-2,41-2,42-7,43-3,44-3,45-6,47-3,48-6,49-10,56-13,57-15,73-6,74-6,78-2,80-3,82-3,87-10,88-10,89-10,91-9");
-			propertiesFile.setString("SkillNames", "Miner,Mason,Woodcutter,Carpenter,Gemcutter,Metalcrafter,Hauler,Wrestler,Axeman,Swordsman,Bowman,Armoruser,Dodger");
+			propertiesFile.setString("Durability", "Durability=1-2,2-2,3-2,4-2,5-2,7-15,12-2,13-4,14-7,15-3,16-2,17-2,21-6,22-8,24-2,41-2,42-7,43-3,44-3,45-6,47-3,48-6,49-10,56-13,57-15,73-6,74-6,78-2,80-3,82-3,87-10,88-10,89-10");
+			propertiesFile.setString("SkillNames", "Miner,Mason,Woodcutter,Carpenter,Gemcutter,Metalcrafter,Hauler,Clother,Wrestler,Axeman,Swordsman,Bowman,Armoruser,Dodger");
 			propertiesFile.setString("BaseExp", "0,200,450,750,1100,1500,1950,2450,3000,3600,4250,4950,5700,6500,7350");
 			propertiesFile.setString("BaseRang", "BaseRang=Novice,Adequate,Competent,Skilled,Proficient,Talented,Adept,Expert,Professional,Accomplished,Great,Master,High Master,Grand Master,Legendary");
-			propertiesFile.setString("MinerDestroy", "1,4,43,44,45,48,49,67,87,89");
+			propertiesFile.setString("MinerDestroy", "1,4,7,24,43,44,45,48,49,67,87,89");
 			propertiesFile.setString("MinerTools", "278-3,257-2,274-1,270-1,285-1");
 			propertiesFile.setString("MinerExp", "0,200,600,1400,2400,3600,4800,6400,8200,10200,12400,14800,17400,20200,23200");
 			propertiesFile.setString("MinerRang", "Novice,Adequate,Competent,Skilled,Proficient,Talented,Adept,Expert,Professional,Accomplished,Great,Master,High Master,Grand Master,Crazy");
-			propertiesFile.setString("MasonCreate", "1,4,43,44,45,48,49,67,87,89");
+			propertiesFile.setString("MasonCreate", "1,4,7,24,43,44,45,48,49,67,87,89");
 			propertiesFile.setString("WoodcutterDestroy", "5,17,47,53,85");
 			propertiesFile.setString("WoodcutterTools", "279-3,258-2,275-1,271-1,286-1");
 			propertiesFile.setString("CarpenterCreate", "5,17,47,53,85");
-			propertiesFile.setString("GemcutterDestroy", "14,15,16,20,41,42,56,57,73,74");
+			propertiesFile.setString("GemcutterDestroy", "14,15,16,20,21,41,42,56,57,73,74");
 			propertiesFile.setString("GemcutterCreate", "20");
 			propertiesFile.setString("GemcutterTools", "278-3,257-2,274-1,270-1,285-1");
-			propertiesFile.setString("MetalcrafterCreate", "41,42,57");
-			propertiesFile.setString("HaulerDestroy", "2,3,12,13,35,60,78,80,82,88");
-			propertiesFile.setString("HaulerCreate", "2,3,12,13,35,60,78,80,82,88");
+			propertiesFile.setString("MetalcrafterCreate", "22,41,42,57");
+			propertiesFile.setString("HaulerDestroy", "2,3,12,13,60,78,80,82,88");
+			propertiesFile.setString("HaulerCreate", "2,3,12,13,60,78,80,82,88");
 			propertiesFile.setString("HaulerTools", "277-3,256-2,273-1,269-1,284-1");
 			propertiesFile.setString("HaulerExp", "0,300,700,1200,1800,2500,3300,4200,5200,6300,7500,8800,10200,11700,13300");
+			propertiesFile.setString("ClotherCreate", "26,27,28,29,30,31,32,33,34,35,36");
+			propertiesFile.setString("ClotherDestroy", "26,27,28,29,30,31,32,33,34,35,36");
 			propertiesFile.setString("WrestlerWeapon", "399-2");
 			propertiesFile.setString("AxemanWeapon", "271-1,286-2,275-3,258-4,279-6");
 			propertiesFile.setString("SwordsmanWeapon", "268-2,283-3,272-4,267-5,276-7");
@@ -201,6 +207,7 @@ public class SkillsProperties {
 			return true;
 		}
 		catch(Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}
@@ -232,7 +239,7 @@ public class SkillsProperties {
 	}
 	
 	public static int getBlockDurability(Block block) {
-		if(getDestroySkill(block.getType()) == 0){
+		if(Durability[block.getType()] == 0){
 			return 1;
 		}
 		int durability = block.getData();
@@ -241,7 +248,7 @@ public class SkillsProperties {
 				durability = Durability[block.getType()];
 			}
 			else {
-				durability = BaseDurability;
+				durability = 1;
 			}
 			etc.getServer().setBlockData(block.getX(), block.getY(), block.getZ(), durability);
 		}

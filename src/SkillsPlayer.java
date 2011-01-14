@@ -27,6 +27,7 @@ public class SkillsPlayer {
 			return playersList.get(player);
 		}
 		catch(Exception e) {
+			e.printStackTrace();
 			return null;
 		}
 	}
@@ -50,6 +51,7 @@ public class SkillsPlayer {
 			return true;
 		}
 		catch(Exception e) {
+			e.printStackTrace();
 			return false;
 		}
 	}

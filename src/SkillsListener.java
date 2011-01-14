@@ -1,11 +1,8 @@
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Random;
-import java.util.logging.Logger;
 
 public class SkillsListener extends PluginListener {
-	private static final Logger log = Logger.getLogger("Minecraft");
-	
 	public boolean onAttack(LivingEntity attacker, LivingEntity defender, Integer amount) {
 		if(attacker.getHealth() < 1)
 			return true;
@@ -259,13 +256,20 @@ public class SkillsListener extends PluginListener {
 		}
 		else {
 			if(sp.getLevel(skill) + tool >= durability) {
-				sp.giveExp(skill, durability);
+				if(SkillsProperties.levelDependentDestroyGain){
+					sp.giveExp(skill, durability);
+				}
+				else{
+					sp.giveExp(skill, 1);
+				}
 				return false;
 			}
 			else {
 				durability -= 1;
 				etc.getServer().setBlockData(block.getX(), block.getY(), block.getZ(), durability);
-				sp.giveExp(skill, 1);
+				if(SkillsProperties.levelDependentDestroyGain){
+					sp.giveExp(skill, 1);
+				}
 				return true;
 			}
 		}
@@ -275,13 +279,19 @@ public class SkillsListener extends PluginListener {
 	public boolean onBlockPlace(Player player, Block block, Block blockClicked, Item itemInHand) {
 		SkillsPlayer sp = SkillsPlayer.get(player);
 		int skill = SkillsProperties.getCreateSkill(block.getType());
-		if(skill < 1)
+		if(skill < 1){
 			return false;
+		}
 		if(SkillsProperties.debugOn){
 			player.sendMessage("Skill - " + Integer.toString(sp.getLevel(skill)));
 		}
 		etc.getServer().setBlockData(block.getX(), block.getY(), block.getZ(), sp.getLevel(skill));
-		sp.giveExp(skill, 1);
+		if(SkillsProperties.levelDependentCreatyGain){
+			sp.giveExp(skill, sp.getLevel(skill));
+		}
+		else{
+			sp.giveExp(skill, 1);
+		}
 		return false;
 	}
 
@@ -289,9 +299,7 @@ public class SkillsListener extends PluginListener {
 	{
 	      if (split[0].equalsIgnoreCase("stop"))
 	      {
-	         if(!SkillsPlayer.save()){
-	        	log.warning("Something wrong! Can't save skill!");
-	         }
+	         SkillsPlayer.save();
 	      }
 	      return false;
 	}

@@ -4,7 +4,7 @@ import java.util.Hashtable;
 
 public class SkillsPlayer {
 	private static final PropertiesFile playersFile = new PropertiesFile("Skills.txt");
-	private static Hashtable<Player, SkillsPlayer> playersList = new Hashtable<Player, SkillsPlayer>();
+	private static Hashtable<String, SkillsPlayer> playersList = new Hashtable<String, SkillsPlayer>();
 	
 	private Player player;
 	private Date battleDelay = new Date(0);
@@ -12,19 +12,19 @@ public class SkillsPlayer {
 	private int[] skillLevel = new int[100];
 	
 	public static SkillsPlayer get(Player player){
-		if(playersList.containsKey(player)) {
-			return playersList.get(player);
+		if(playersList.containsKey(player.getName())) {
+			return playersList.get(player.getName());
 		}
 		try {
 			playersFile.load();
 			if(playersFile.containsKey(player.getName())) {
 				String skills = playersFile.getString(player.getName());
-				playersList.put(player, new SkillsPlayer(player, skills));
+				playersList.put(player.getName(), new SkillsPlayer(player, skills));
 			}
 			else {
-				playersList.put(player, new SkillsPlayer(player));
+				playersList.put(player.getName(), new SkillsPlayer(player));
 			}
-			return playersList.get(player);
+			return playersList.get(player.getName());
 		}
 		catch(Exception e) {
 			e.printStackTrace();
@@ -35,7 +35,7 @@ public class SkillsPlayer {
 	public static boolean save(){
 		try {
 			playersFile.load();
-			Enumeration<Player> keys = playersList.keys();
+			Enumeration<String> keys = playersList.keys();
 			while(keys.hasMoreElements()) {
 				SkillsPlayer sp = playersList.get(keys.nextElement());
 				String skills = "";

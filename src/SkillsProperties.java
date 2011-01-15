@@ -174,10 +174,10 @@ public class SkillsProperties {
 			propertiesFile.setString("armorMod", "1");
 			propertiesFile.setString("monsterMod", "5");
 			propertiesFile.setString("explosionDrop", "1");
-			propertiesFile.setString("Durability", "Durability=1-2,2-2,3-2,4-2,5-2,7-15,12-2,13-4,14-7,15-3,16-2,17-2,21-6,22-8,24-2,41-2,42-7,43-3,44-3,45-6,47-3,48-6,49-10,56-13,57-15,73-6,74-6,78-2,80-3,82-3,87-10,88-10,89-10");
+			propertiesFile.setString("Durability", "1-2,2-2,3-2,4-2,5-2,7-15,12-2,13-4,14-7,15-3,16-2,17-2,21-6,22-8,24-2,41-2,42-7,43-3,44-3,45-6,47-3,48-6,49-10,56-13,57-15,73-6,74-6,78-2,80-3,82-3,87-10,88-10,89-10");
 			propertiesFile.setString("SkillNames", "Miner,Mason,Woodcutter,Carpenter,Gemcutter,Metalcrafter,Hauler,Clother,Wrestler,Axeman,Swordsman,Bowman,Armoruser,Dodger");
 			propertiesFile.setString("BaseExp", "0,200,450,750,1100,1500,1950,2450,3000,3600,4250,4950,5700,6500,7350");
-			propertiesFile.setString("BaseRang", "BaseRang=Novice,Adequate,Competent,Skilled,Proficient,Talented,Adept,Expert,Professional,Accomplished,Great,Master,High Master,Grand Master,Legendary");
+			propertiesFile.setString("BaseRang", "Novice,Adequate,Competent,Skilled,Proficient,Talented,Adept,Expert,Professional,Accomplished,Great,Master,High Master,Grand Master,Legendary");
 			propertiesFile.setString("MinerDestroy", "1,4,7,24,43,44,45,48,49,67,87,89");
 			propertiesFile.setString("MinerTools", "278-3,257-2,274-1,270-1,285-1");
 			propertiesFile.setString("MinerExp", "0,200,600,1400,2400,3600,4800,6400,8200,10200,12400,14800,17400,20200,23200");

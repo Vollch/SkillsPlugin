@@ -1,0 +1,5 @@
+name: Skills
+
+main: com.bukkit.Vollch.Skills
+
+version: 0.7

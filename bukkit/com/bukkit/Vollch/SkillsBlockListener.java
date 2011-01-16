@@ -1,12 +1,12 @@
 package com.bukkit.Vollch;
 
-import org.bukkit.BlockDamageLevel;
-import org.bukkit.ItemStack;
 import org.bukkit.Location;
 import org.bukkit.World;
-import org.bukkit.event.block.BlockDamagedEvent;
+import org.bukkit.block.BlockDamageLevel;
+import org.bukkit.event.block.BlockDamageEvent;
 import org.bukkit.event.block.BlockListener;
-import org.bukkit.event.block.BlockPlacedEvent;
+import org.bukkit.event.block.BlockPlaceEvent;
+import org.bukkit.inventory.ItemStack;
 
 public class SkillsBlockListener extends BlockListener {
 	//private Skills plugin;
@@ -15,13 +15,13 @@ public class SkillsBlockListener extends BlockListener {
     	//this.plugin = plugin;
     }
 
-    public void onBlockDamaged(BlockDamagedEvent event) {
+    public void onBlockDamaged(BlockDamageEvent event) {
         if (event.getDamageLevel() == BlockDamageLevel.BROKEN) {
         	SkillsPlayer sp = SkillsPlayer.get(event.getPlayer());
         	
-    		int skillDestroy = SkillsProperties.getDestroySkill(event.getBlock().getTypeID());
+    		int skillDestroy = SkillsProperties.getDestroySkill(event.getBlock().getTypeId());
     		if(skillDestroy > 0){
-	    		int tool = SkillsProperties.getItemLevel(event.getPlayer().getItemInHand().getTypeID(), skillDestroy);
+	    		int tool = SkillsProperties.getItemLevel(event.getPlayer().getItemInHand().getTypeId(), skillDestroy);
 	    		int durability = SkillsProperties.getBlockDurability(event.getBlock());
 	    		if(SkillsProperties.debugOn){
 	    			event.getPlayer().sendMessage("Skill - " + Integer.toString(sp.getLevel(skillDestroy)) + " Tool - " + Integer.toString(tool) + " Dura - " + Integer.toString(durability));
@@ -52,7 +52,7 @@ public class SkillsBlockListener extends BlockListener {
 	    			}
 	    		}
     		}
-    		int skillGather = SkillsProperties.getGatherSkill(event.getBlock().getTypeID());
+    		int skillGather = SkillsProperties.getGatherSkill(event.getBlock().getTypeId());
     		if(skillGather > 0){
     			sp.giveExp(skillGather, 1);
     			Integer[] items = SkillsProperties.getDrop(event.getBlock(), sp.getLevel(skillGather));
@@ -72,15 +72,15 @@ public class SkillsBlockListener extends BlockListener {
     }
     
    
-    public void onBlockPlaced(BlockPlacedEvent event) {
-		int skill = SkillsProperties.getCreateSkill(event.getBlockPlaced().getTypeID());
+    public void onBlockPlaced(BlockPlaceEvent event) {
+		int skill = SkillsProperties.getCreateSkill(event.getBlockPlaced().getTypeId());
 		if(skill < 1){
 			return;
 		}
 		SkillsPlayer sp = SkillsPlayer.get(event.getPlayer());
 		
 		if(SkillsProperties.debugOn){
-			event.getPlayer().sendMessage("Skill - " + sp.getLevel(skill) + "Block - " + event.getBlockPlaced().getTypeID());
+			event.getPlayer().sendMessage("Skill - " + sp.getLevel(skill) + "Block - " + event.getBlockPlaced().getTypeId());
 		}
 		
 		SkillsProperties.setBlockDurability(event.getBlock(), sp.getLevel(skill));

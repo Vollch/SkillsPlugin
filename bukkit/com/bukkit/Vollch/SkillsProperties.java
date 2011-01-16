@@ -9,7 +9,7 @@ import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Hashtable;
 
-import org.bukkit.Block;
+import org.bukkit.block.Block;
 
 public class SkillsProperties {
 	private static final PropertiesFile propertiesFile = new PropertiesFile("Skills.properties");
@@ -222,22 +222,22 @@ public class SkillsProperties {
 	}
 	
 	public static int getBlockDurability(Block block) {
-		if(Durability[block.getTypeID()] == 0)
+		if(Durability[block.getTypeId()] == 0)
 			return 1;	
 		else
 		{	
-			if(Custom[block.getTypeID()]){
+			if(Custom[block.getTypeId()]){
 				if(customBlocks.containsKey(getBlockHash(block)))
 					return customBlocks.get(getBlockHash(block));	
 				else
-					return Durability[block.getTypeID()];
+					return Durability[block.getTypeId()];
 			}
 			else
 			{
 				int durability = block.getData();
 				if(durability == 0) {
-					if(Durability[block.getTypeID()] > 0) {
-						durability = Durability[block.getTypeID()];
+					if(Durability[block.getTypeId()] > 0) {
+						durability = Durability[block.getTypeId()];
 					}
 					else {
 						durability = 1;
@@ -250,7 +250,7 @@ public class SkillsProperties {
 	}
 	
 	public static void setBlockDurability(Block block, int durability) {
-		if(Custom[block.getTypeID()]){
+		if(Custom[block.getTypeId()]){
 			int hash = getBlockHash(block);
 			if(durability < 1 && customBlocks.containsKey(hash)){
 				customBlocks.remove(hash);
@@ -306,7 +306,7 @@ public class SkillsProperties {
 	public static Integer[] getDrop(Block block, int level){
 		ArrayList<Integer> items = new ArrayList<Integer>();
 		for(int i = 0; i < level; i++){
-			Hashtable<Integer, Double> table = gatherItems.get(block.getTypeID());
+			Hashtable<Integer, Double> table = gatherItems.get(block.getTypeId());
 			Enumeration<Integer> keys = table.keys();
 			while(keys.hasMoreElements()) {
 				int item = keys.nextElement();

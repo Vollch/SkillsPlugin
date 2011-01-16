@@ -25,8 +25,8 @@ public class Skills extends JavaPlugin {
     private final SkillsPlayerListener playerListener = new SkillsPlayerListener(this);
     private final SkillsBlockListener blockListener = new SkillsBlockListener(this);
 
-    public Skills(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File plugin, ClassLoader cLoader) {
-        super(pluginLoader, instance, desc, plugin, cLoader);
+    public Skills(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
+    	super(pluginLoader, instance, desc, folder, plugin, cLoader);
     }
 
     public void onEnable() {

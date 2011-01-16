@@ -1,6 +1,6 @@
 package com.bukkit.Vollch;
 
-import org.bukkit.event.entity.EntityDamagedByEntityEvent;
+import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityListener;
 
 public class SkillsEntityListener extends EntityListener {
@@ -10,6 +10,6 @@ public class SkillsEntityListener extends EntityListener {
     	//this.plugin = plugin;
     }
     
-    public void onEntityDamagedByEntity(EntityDamagedByEntityEvent event) {
+    public void onEntityDamagedByEntity(EntityDamageByEntityEvent event) {
     }
 }

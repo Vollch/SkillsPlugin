@@ -2,7 +2,7 @@ package com.bukkit.Vollch;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
-import org.bukkit.Player;
+import org.bukkit.entity.Player;
 
 public class SkillsPlayer {
 	private static final PropertiesFile playersFile = new PropertiesFile("Skills.txt");

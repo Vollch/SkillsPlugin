@@ -45,7 +45,7 @@ public class Skills extends JavaPlugin {
         pm.registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Lowest, this);
         pm.registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.Normal, this);
-       
+
         PluginDescriptionFile pdfFile = this.getDescription();
         log.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
     }

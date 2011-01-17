@@ -10,6 +10,6 @@ public class SkillsEntityListener extends EntityListener {
     	//this.plugin = plugin;
     }
     
-    public void onEntityDamagedByEntity(EntityDamageByEntityEvent event) {
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
     }
 }

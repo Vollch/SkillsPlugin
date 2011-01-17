@@ -16,7 +16,7 @@ public class SkillsPlayerListener extends PlayerListener {
     	String[] split = event.getMessage().split(" ");
     	Player player = event.getPlayer();
     	
-		if(split[0].equalsIgnoreCase("/skillsversion") || split[0].equalsIgnoreCase("/skillsversion")) {	
+		if(split[0].equalsIgnoreCase("/skillsversion")) {	
 			event.setCancelled(true);
 			player.sendMessage(plugin.getDescription().getName() + " " + plugin.getDescription().getVersion());
 		}

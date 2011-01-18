@@ -44,7 +44,7 @@ public class SkillsProperties {
 			String[] temp2;
 			propertiesFile.load();
 			debugOn = propertiesFile.getBoolean("debugOn", false);
-			levelDependentCreatyGain = propertiesFile.getBoolean("levelDependentCreatyGain", false);
+			levelDependentCreatyGain = propertiesFile.getBoolean("levelDependentCreateGain", false);
 			levelDependentDestroyGain = propertiesFile.getBoolean("levelDependentDestroyGain", false);
 			levelDependentGatherGain = propertiesFile.getBoolean("levelDependentGatherGain", false);
 			toBroke = propertiesFile.getInt("toBroke", 5);

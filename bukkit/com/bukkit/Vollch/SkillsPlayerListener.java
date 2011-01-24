@@ -116,29 +116,29 @@ public class SkillsPlayerListener extends PlayerListener {
 //			}
 //			player.sendMessage("Correct usage is: /reset <playername>");
 //		}
-		else if(split[0].equalsIgnoreCase("/giveexp")) {
-			event.setCancelled(true);
-			if(split.length > 3){
-				Player p = plugin.getServer().getPlayer(split[1]);
-				if(p != null){
-					SkillsPlayer sp = SkillsPlayer.get(p);
-					int skill = 0;
-					int amount = Integer.parseInt(split[3]);
-					for(int i = 1; i < SkillsProperties.Skills.length; i++) {
-						if(SkillsProperties.Skills[i].regionMatches(true, 0, split[2], 0, split[2].length())) {
-							skill = i;
-							break;
-						}
-					}
-					if(amount != 0 && skill > 0 && sp != null) {
-						sp.giveExp(skill, amount);
-						player.sendMessage("Done!");
-						return;
-					}
-				}
-			}
-			player.sendMessage("Correct usage is: /giveexp [playername] [skillname] [amount]");
-		}
+//		else if(split[0].equalsIgnoreCase("/giveexp")) {
+//			event.setCancelled(true);
+//			if(split.length > 3){
+//				Player p = plugin.getServer().getPlayer(split[1]);
+//				if(p != null){
+//					SkillsPlayer sp = SkillsPlayer.get(p);
+//					int skill = 0;
+//					int amount = Integer.parseInt(split[3]);
+//					for(int i = 1; i < SkillsProperties.Skills.length; i++) {
+//						if(SkillsProperties.Skills[i].regionMatches(true, 0, split[2], 0, split[2].length())) {
+//							skill = i;
+//							break;
+//						}
+//					}
+//					if(amount != 0 && skill > 0 && sp != null) {
+//						sp.giveExp(skill, amount);
+//						player.sendMessage("Done!");
+//						return;
+//					}
+//				}
+//			}
+//			player.sendMessage("Correct usage is: /giveexp [playername] [skillname] [amount]");
+//		}
 		else if(split[0].equalsIgnoreCase("/debug")) {
 			event.setCancelled(true);			
 			if(SkillsProperties.debugOn){

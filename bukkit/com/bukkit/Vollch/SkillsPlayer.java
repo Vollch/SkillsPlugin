@@ -1,8 +1,10 @@
 package com.bukkit.Vollch;
+import java.util.Date;
 import java.util.Enumeration;
 import java.util.Hashtable;
 
 import org.bukkit.entity.Player;
+import org.bukkit.inventory.ItemStack;
 
 public class SkillsPlayer {
 	private static final PropertiesFile playersFile = new PropertiesFile("Skills.txt");
@@ -10,6 +12,7 @@ public class SkillsPlayer {
 	private static Hashtable<String, SkillsPlayer> playersList = new Hashtable<String, SkillsPlayer>();
 	
 	private Player player;
+	private Date battleDelay = new Date(0);
 	private int[] skillExp = new int[100];
 	private int[] skillLevel = new int[100];
 	
@@ -111,6 +114,23 @@ public class SkillsPlayer {
 			this.skillLevel[skill]++;
 			
 			this.player.sendMessage("Congratulations! You are " + SkillsProperties.getRangForLevel(this.getLevel(skill), skill) + " " + SkillsProperties.Skills[skill] + "!");
+			ItemStack gift = SkillsProperties.getGift(this.skillLevel[skill], skill);
+			if(gift != null){
+				this.player.sendMessage("Here you gift! "+gift.getAmount()+" "+gift.getType().toString());
+				this.player.getWorld().dropItem(this.player.getLocation(), gift);
+			}
 		}
+	}
+	
+	public long getTimer(){
+		return new Date().getTime() - this.battleDelay.getTime();
+	}
+	
+	public void resetTimer(){
+		this.battleDelay.setTime(new Date().getTime());
+	}
+
+	public void stopTimer(){
+		this.battleDelay.setTime(0);
 	}
 }

@@ -15,8 +15,8 @@ public class SkillsBlockListener extends BlockListener {
     	//this.plugin = plugin;
     }
 
-    public void onBlockDamage(BlockDamageEvent event) {
-        if (event.getDamageLevel() == BlockDamageLevel.BROKEN) {
+    public void onBlockDamage(BlockDamageEvent event) {  	
+        if (event.getDamageLevel() == BlockDamageLevel.BROKEN && event.getPlayer() != null) {	
         	SkillsPlayer sp = SkillsPlayer.get(event.getPlayer());
     		int skillDestroy = SkillsProperties.getDestroySkill(event.getBlock().getTypeId());
     		if(skillDestroy > 0){
@@ -54,7 +54,7 @@ public class SkillsBlockListener extends BlockListener {
     		int skillGather = SkillsProperties.getGatherSkill(event.getBlock().getTypeId());
     		if(skillGather > 0){
     			sp.giveExp(skillGather, 1);
-    			Integer[] items = SkillsProperties.getDrop(event.getBlock(), sp.getLevel(skillGather));
+    			Integer[] items = SkillsProperties.getGather(event.getBlock(), sp.getLevel(skillGather));
     			
     			if(items.length > 0){
     				if(SkillsProperties.levelDependentGatherGain){
@@ -77,19 +77,15 @@ public class SkillsBlockListener extends BlockListener {
 			return;
 		}
 		SkillsPlayer sp = SkillsPlayer.get(event.getPlayer());
-		
 		if(SkillsProperties.debugOn){
-			event.getPlayer().sendMessage("Skill - " + sp.getLevel(skill) + "Block - " + event.getBlockPlaced().getTypeId());
+			event.getPlayer().sendMessage("Skill - " + sp.getLevel(skill) + " Block - " + event.getBlockPlaced().getTypeId());
 		}
-		
-		SkillsProperties.setBlockDurability(event.getBlock(), sp.getLevel(skill));
-
+		SkillsProperties.setBlockDurability(event.getBlockPlaced(), sp.getLevel(skill));
 		if(SkillsProperties.levelDependentCreatyGain){
 			sp.giveExp(skill, sp.getLevel(skill));
 		}
 		else{
 			sp.giveExp(skill, 1);
-		}
-		return;
+		}		
     }
 }

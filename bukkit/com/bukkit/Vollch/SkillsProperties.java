@@ -10,32 +10,44 @@ import java.util.HashMap;
 import java.util.Hashtable;
 
 import org.bukkit.block.Block;
+import org.bukkit.inventory.ItemStack;
 
 public class SkillsProperties {
 	private static final PropertiesFile propertiesFile = new PropertiesFile("Skills.properties");
-	
 	private static HashMap<Integer, Byte> customBlocks = new HashMap<Integer, Byte>();
-
 	private static int[] Durability = new int[100];
 	private static boolean[] Custom = new boolean[100];
-	private static int[] DestroySkill = new int[100];
-	private static int[] CreateSkill = new int[100];
-	private static int[] GatherSkill = new int[100];
+	private static int[] WeaponSkill = new int[400]; 
+	private static int[] ArmorSkill = new int[400];
+	private static int[] ArmorDurability = new int[400];
+	private static int[] destroySkill = new int[100];
+	private static int[] createSkill = new int[100];
+	private static int[] gatherSkill = new int[100];
 	private static HashMap<Integer, Hashtable<Integer, Double>> gatherItems = new HashMap<Integer, Hashtable<Integer, Double>>();
+	private static HashMap<String, Integer> dropSkill = new HashMap<String, Integer>();
+	private static HashMap<String, Hashtable<Integer, Double>> dropItems = new HashMap<String, Hashtable<Integer, Double>>();
+	private static ItemStack[][] SkillGift;
 	private static int[][] SkillItem;
 	private static int[] BaseExp;
 	private static int[][] SkillExp;
 	private static String[] BaseRang;
 	private static String[][] SkillRang;
 	
+	public static double[] Dodge;
 	public static String[] Skills;
-
+	
 	public static boolean debugOn;
+	public static boolean combatOn;
 	public static boolean levelDependentCreatyGain;
 	public static boolean levelDependentDestroyGain;
 	public static boolean levelDependentGatherGain;
+	public static boolean levelDependentDropGain;
 	public static int toBroke;
 	public static int saveTimer;
+	public static double explosionDrop;
+	public static double weaponMod;
+	public static double armorMod;
+	public static double monsterMod;
 	
 	public static boolean loadConfig(){
 		try {
@@ -44,11 +56,17 @@ public class SkillsProperties {
 			String[] temp2;
 			propertiesFile.load();
 			debugOn = propertiesFile.getBoolean("debugOn", false);
+			combatOn = propertiesFile.getBoolean("combatOn", true);
 			levelDependentCreatyGain = propertiesFile.getBoolean("levelDependentCreateGain", false);
 			levelDependentDestroyGain = propertiesFile.getBoolean("levelDependentDestroyGain", false);
 			levelDependentGatherGain = propertiesFile.getBoolean("levelDependentGatherGain", false);
+			levelDependentDropGain = propertiesFile.getBoolean("levelDependentDropGain", false);
 			toBroke = propertiesFile.getInt("toBroke", 5);
 			saveTimer = propertiesFile.getInt("saveTimer", 60000);
+			explosionDrop = propertiesFile.getDouble("explosionDrop", 1);
+			weaponMod = propertiesFile.getDouble("weaponMod", 0.3);
+			armorMod = propertiesFile.getDouble("armorMod", 1);
+			monsterMod = propertiesFile.getDouble("monsterMod", 5);
 		
 			if(propertiesFile.containsKey("Custom")){
 				temp = propertiesFile.getString("Custom").split(",");
@@ -89,7 +107,7 @@ public class SkillsProperties {
 				Skills[i+1] = temp[i];
 			}
 	
-			
+			SkillGift = new ItemStack[Skills.length][16];
 			SkillExp = new int[Skills.length][16];
 			SkillRang = new String[Skills.length][16];
 			SkillItem = new int[Skills.length][400];
@@ -124,20 +142,20 @@ public class SkillsProperties {
 				if(propertiesFile.containsKey(Skills[i] + "Destroy")) {
 					temp = propertiesFile.getString(Skills[i] + "Destroy").split(",");
 					for(String str : temp) {
-						DestroySkill[Integer.parseInt(str)] = i;
+						destroySkill[Integer.parseInt(str)] = i;
 					}
 				}
 				if(propertiesFile.containsKey(Skills[i] + "Create")) {
 					temp = propertiesFile.getString(Skills[i] + "Create").split(",");
 					for(String str : temp) {
-						CreateSkill[Integer.parseInt(str)] = i;
+						createSkill[Integer.parseInt(str)] = i;
 					}
 				}
 				if(propertiesFile.containsKey(Skills[i] + "Gather")) {
 					temp = propertiesFile.getString(Skills[i] + "Gather").split(",");
 					for(String str : temp) {
 						temp2 = str.split("-");
-						GatherSkill[Integer.parseInt(temp2[0])] = i;
+						gatherSkill[Integer.parseInt(temp2[0])] = i;
 						Hashtable<Integer, Double> table = new Hashtable<Integer, Double>();
 						for(int ii = 1; ii < temp2.length; ii+=2){
 							table.put(Integer.valueOf(temp2[ii]), Double.valueOf(temp2[ii+1]));
@@ -145,11 +163,56 @@ public class SkillsProperties {
 						gatherItems.put(Integer.parseInt(temp2[0]), table);
 					}
 				}
+				if(propertiesFile.containsKey(Skills[i] + "Drop")) {
+					temp = propertiesFile.getString(Skills[i] + "Drop").split(",");
+					for(String str : temp) {
+						temp2 = str.split("-");
+						dropSkill.put(temp2[0], i);
+						Hashtable<Integer, Double> table = new Hashtable<Integer, Double>();
+						for(int ii = 1; ii < temp2.length; ii+=2){
+							table.put(Integer.valueOf(temp2[ii]), Double.valueOf(temp2[ii+1]));
+						}
+						dropItems.put(temp2[0], table);
+					}
+				}
 				if(propertiesFile.containsKey(Skills[i] + "Tools")) {
 					temp = propertiesFile.getString(Skills[i] + "Tools").split(",");
 					for(String str : temp) {
 						temp2 = str.split("-");
 						SkillItem[i][Integer.parseInt(temp2[0])] = Integer.parseInt(temp2[1]);
+					}
+				}
+				
+				if(propertiesFile.containsKey(Skills[i] + "Gift")) {
+					temp = propertiesFile.getString(Skills[i] + "Gift").split(",");
+					for(int ii = 1; ii <= 15; ii++) {
+						temp2 = temp[ii - 1].split("-");
+						SkillGift[i][ii] = new ItemStack(Integer.parseInt(temp2[0]), Integer.parseInt(temp2[1]));
+					}
+				}
+				if(propertiesFile.containsKey(Skills[i] + "Weapon")) {
+					temp = propertiesFile.getString(Skills[i] + "Weapon").split(",");
+					for(String str : temp) {
+						temp2 = str.split("-");
+						SkillItem[i][Integer.parseInt(temp2[0])] = Integer.parseInt(temp2[1]);
+						WeaponSkill[Integer.parseInt(temp2[0])] = i;
+					}
+				}
+				if(propertiesFile.containsKey(Skills[i] + "Armor")) {
+					temp = propertiesFile.getString(Skills[i] + "Armor").split(",");
+					for(String str : temp) {
+						temp2 = str.split("-");
+						SkillItem[i][Integer.parseInt(temp2[0])] = Integer.parseInt(temp2[2]);
+						ArmorSkill[Integer.parseInt(temp2[0])] = i;
+						ArmorDurability[Integer.parseInt(temp2[0])] = Integer.parseInt(temp2[1]);
+					}
+				}
+				if(propertiesFile.containsKey(Skills[i] + "Dodge")) {
+					temp = propertiesFile.getString(Skills[i] + "Dodge").split(",");
+					Dodge = new double[temp.length + 1];
+					Dodge[0] = i;
+					for(int ii = 0; ii < temp.length; ii++) {
+						Dodge[ii+1] = Double.valueOf(temp[ii]);
 					}
 				}
 			}
@@ -165,10 +228,13 @@ public class SkillsProperties {
 		try {
 			propertiesFile.load();
 			propertiesFile.setString("debugOn", "false");
+			propertiesFile.setString("combatOn", "false");
 			propertiesFile.setString("levelDependentCreateGain", "false");
 			propertiesFile.setString("levelDependentDestroyGain", "false");
 			propertiesFile.setString("levelDependentGatherGain", "false");
+			propertiesFile.setString("levelDependentDropGain", "false");
 			propertiesFile.setString("toBroke", "3");
+			propertiesFile.setString("explosionDrop", "1");
 			propertiesFile.setString("saveTimer", "60000");
 			propertiesFile.setString("Custom", "17,26,27,28,29,30,31,32,33,34,35,35");
 			propertiesFile.setString("Durability", "1-2,2-2,3-2,4-2,5-2,7-15,12-2,13-4,14-7,15-3,16-2,17-2,21-6,22-8,24-2,41-2,42-7,43-3,44-3,45-6,47-3,48-6,49-10,56-13,57-15,73-6,74-6,78-2,80-3,82-3,87-10,88-10,89-10");
@@ -178,7 +244,6 @@ public class SkillsProperties {
 			propertiesFile.setString("MinerDestroy", "1,4,7,24,43,44,45,48,49,67,87,89");
 			propertiesFile.setString("MinerTools", "278-3,257-2,274-1,270-1,285-1");
 			propertiesFile.setString("MinerExp", "0,200,600,1400,2400,3600,4800,6400,8200,10200,12400,14800,17400,20200,23200");
-			propertiesFile.setString("MinerRang", "Novice,Adequate,Competent,Skilled,Proficient,Talented,Adept,Expert,Professional,Accomplished,Great,Master,High Master,Grand Master,Crazy");
 			propertiesFile.setString("MasonCreate", "1,4,7,24,43,44,45,48,49,67,87,89");
 			propertiesFile.setString("WoodcutterDestroy", "5,17,47,53,85");
 			propertiesFile.setString("WoodcutterTools", "279-3,258-2,275-1,271-1,286-1");
@@ -204,22 +269,44 @@ public class SkillsProperties {
 	}
 	
 	public static int getDestroySkill(int block) {
-		return DestroySkill[block];
+		return destroySkill[block];
 	}
 	
 	public static int getGatherSkill(int block) {
-		return GatherSkill[block];
+		return gatherSkill[block];
+	}
+	
+	public static int getDropSkill(String foe) {
+		if(dropSkill.containsKey(foe)){
+			return dropSkill.get(foe);
+		}
+		else{
+			return 0;
+		}
 	}
 	
 	public static int getCreateSkill(int block) {
-		return CreateSkill[block];
+		return createSkill[block];
+	}
+	
+	public static int getWeaponSkill(int item) {
+		if(item == -1)
+			item = 399;
+		return WeaponSkill[item];
+	}
+
+	public static int getArmorSkill(int item) {
+		return ArmorSkill[item];
+	}
+	
+	public static int getArmorDurability(int item) {
+		return ArmorDurability[item];
 	}
 	
 	public static int getItemLevel(int item, int skill) {
-		if(item == -1)
-			item = 399;
 		return SkillItem[skill][item];
 	}
+	
 	
 	public static int getBlockDurability(Block block) {
 		if(Durability[block.getTypeId()] == 0)
@@ -303,7 +390,7 @@ public class SkillsProperties {
         return hash;
     }
 	
-	public static Integer[] getDrop(Block block, int level){
+	public static Integer[] getGather(Block block, int level){
 		ArrayList<Integer> items = new ArrayList<Integer>();
 		for(int i = 0; i < level; i++){
 			Hashtable<Integer, Double> table = gatherItems.get(block.getTypeId());
@@ -319,7 +406,28 @@ public class SkillsProperties {
 		items.toArray(ret);
 		return ret;
 	}
+	
+	public static Integer[] getDrop(String foe, int level){
+		ArrayList<Integer> items = new ArrayList<Integer>();
+		for(int i = 0; i < level; i++){
+			Hashtable<Integer, Double> table = dropItems.get(foe);
+			Enumeration<Integer> keys = table.keys();
+			while(keys.hasMoreElements()) {
+				int item = keys.nextElement();
+				if(Math.random() < table.get(item)){
+					items.add(item);
+				}
+			}
+		}
+		Integer[] ret = new Integer[items.size()];
+		items.toArray(ret);
+		return ret;
+	}
     
+	public static ItemStack getGift(int level, int skill){
+		return SkillGift[skill][level];
+	}
+	
 	public static int getExpForLevel(int level, int skill) {
 		return SkillExp[skill][level];
 	}	

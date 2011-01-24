@@ -22,7 +22,7 @@ public class Skills extends JavaPlugin {
 	private static final Logger log = Logger.getLogger("Minecraft");
 	private static final Timer timer = new Timer();
 	
-	//private final SkillsEntityListener entityListener = new SkillsEntityListener(this);
+	private final SkillsEntityListener entityListener = new SkillsEntityListener(this);
     private final SkillsPlayerListener playerListener = new SkillsPlayerListener(this);
     private final SkillsBlockListener blockListener = new SkillsBlockListener(this);
 
@@ -50,13 +50,10 @@ public class Skills extends JavaPlugin {
         pm.registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Lowest, this);
         pm.registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Lowest, this);
         pm.registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Priority.Normal, this);
-        
-        //pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.Normal, this);
-        //pm.registerEvent(Event.Type.ENTITY_COMBUST, entityListener, Priority.Normal, this);
-        //pm.registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Priority.Normal, this);
-        //pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_BLOCK, entityListener, Priority.Normal, this);
-        //pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_PROJECTILE, entityListener, Priority.Normal, this);
-        
+        pm.registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Priority.Normal, this);       
+        pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.Normal, this);
+        pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_PROJECTILE, entityListener, Priority.Normal, this);
+
         PluginDescriptionFile pdfFile = this.getDescription();
         log.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
     }

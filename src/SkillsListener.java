@@ -117,7 +117,7 @@ public class SkillsListener extends PluginListener {
         		
         		
     	    	if(hp > 0){    		
-            		lc dlc = ((LivingEntity)defender).getEntity();
+    	    		OEntityLiving dlc = ((LivingEntity)defender).getEntity();
             		dlc.l.a(dlc, (byte)2);
             		((LivingEntity)defender).setHealth(hp);
     	    	}
@@ -127,7 +127,7 @@ public class SkillsListener extends PluginListener {
     	    			SkillsPlayer.get(defender.getPlayer()).stopTimer();
     	    		}
     	    		((LivingEntity)defender).setHealth(1);
-    	    		((LivingEntity)defender).getEntity().a(null, 5);
+    	    		((LivingEntity)defender).getEntity().a((OEntityLiving)null, 5);
     	    	}
         	}
         	return true;
@@ -165,9 +165,9 @@ public class SkillsListener extends PluginListener {
                     double d7 = center.getZ();
                     double f2 = mod * (0.7D + Math.random() * 0.6D);
                     while(f2 > 0.0F) {
-                        int x = ic.b(d5);
-                        int y = ic.b(d6);
-                        int z = ic.b(d7);
+                        int x = OMathHelper.b(d5);
+                        int y = OMathHelper.b(d6);
+                        int z = OMathHelper.b(d7);
                         if(f2 > 0.0D){
                             list.add(new Block(0,x,y,z));
                         }
@@ -203,9 +203,9 @@ public class SkillsListener extends PluginListener {
         	    double z = Math.pow(center.getZ() - block.getZ(), 2);
         	    durability -= mod * 2 - Math.sqrt(x + y + z);
         	    if(durability < 1){
-        	    	if(gv.m[block.getType()].a(rand) > 0){
+        	    	if(OBlock.m[block.getType()].a(rand) > 0){
         	    		if(SkillsProperties.explosionDrop >= Math.random()){
-            	    		etc.getServer().dropItem(block.getX(), block.getY(), block.getZ(), gv.m[block.getType()].a(0, rand), gv.m[block.getType()].a(rand));
+            	    		etc.getServer().dropItem(block.getX(), block.getY(), block.getZ(), OBlock.m[block.getType()].a(0, rand), OBlock.m[block.getType()].a(rand));
         	    		}
         	    	}
         	    	block.setType(0);
@@ -234,7 +234,7 @@ public class SkillsListener extends PluginListener {
     	    			SkillsPlayer.get(le.getPlayer()).stopTimer();
     	    		}
             		le.setHealth(1);
-            		le.getEntity().a(null, 5);
+            		le.getEntity().a((OEntityLiving)null, 5);
     	    	}
     	    }
     	}

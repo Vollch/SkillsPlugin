@@ -38,6 +38,9 @@ public class SkillsEntityListener extends EntityListener {
     	if(!SkillsProperties.combatOn)
     		return;
     	
+    	if(!(event.getEntity() instanceof LivingEntity))
+    		return;
+    	
     	event.setCancelled(true);
 		Player aplayer = null;
 		Player dplayer = null;

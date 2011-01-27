@@ -18,6 +18,7 @@ public class SkillsProperties {
 	private static int[] Durability = new int[100];
 	private static boolean[] Custom = new boolean[100];
 	private static int[] WeaponSkill = new int[400]; 
+	private static int[] ProjectileSkill = new int[400]; 
 	private static int[] ArmorSkill = new int[400];
 	private static int[] ArmorDurability = new int[400];
 	private static int[] destroySkill = new int[100];
@@ -198,6 +199,14 @@ public class SkillsProperties {
 						WeaponSkill[Integer.parseInt(temp2[0])] = i;
 					}
 				}
+				if(propertiesFile.containsKey(Skills[i] + "Projectile")) {
+					temp = propertiesFile.getString(Skills[i] + "Projectile").split(",");
+					for(String str : temp) {
+						temp2 = str.split("-");
+						SkillItem[i][Integer.parseInt(temp2[0])] = Integer.parseInt(temp2[1]);
+						ProjectileSkill[Integer.parseInt(temp2[0])] = i;
+					}
+				}
 				if(propertiesFile.containsKey(Skills[i] + "Armor")) {
 					temp = propertiesFile.getString(Skills[i] + "Armor").split(",");
 					for(String str : temp) {
@@ -293,6 +302,12 @@ public class SkillsProperties {
 		if(item == -1)
 			item = 399;
 		return WeaponSkill[item];
+	}
+	
+	public static int getProjectileSkill(int item) {
+		if(item == -1)
+			item = 399;
+		return ProjectileSkill[item];
 	}
 
 	public static int getArmorSkill(int item) {

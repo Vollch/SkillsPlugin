@@ -47,8 +47,8 @@ public class Skills extends JavaPlugin {
 		}, 0L, SkillsProperties.saveTimer);
 		
         PluginManager pm = getServer().getPluginManager();
-        pm.registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Lowest, this);
-        pm.registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Lowest, this);
+        pm.registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Highest, this);
+        pm.registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Highest, this);
         pm.registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Priority.Normal, this);       
         pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.Normal, this);

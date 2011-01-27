@@ -27,20 +27,7 @@ public class SkillsEntityListener extends EntityListener {
     	//this.plugin = plugin;
     }
     
-    public void onEntityDamageByProjectile(EntityDamageByProjectileEvent event) {
-    	if(!SkillsProperties.combatOn)
-    		return;
-    	
-    	onEntityDamageByEntity((EntityDamageByEntityEvent)event);
-    }
-    
-    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-    	if(!SkillsProperties.combatOn)
-    		return;
-    	
-    	if(!(event.getEntity() instanceof LivingEntity))
-    		return;
-    	
+    public void doDamage(EntityDamageByEntityEvent event){
     	event.setCancelled(true);
 		Player aplayer = null;
 		Player dplayer = null;
@@ -58,14 +45,23 @@ public class SkillsEntityListener extends EntityListener {
 		
 		if(aplayer != null){
 			int wdamage = 0;
-			wskill = SkillsProperties.getWeaponSkill(aplayer.getItemInHand().getTypeId());
+			if(event instanceof EntityDamageByProjectileEvent){
+				wskill = SkillsProperties.getProjectileSkill(aplayer.getItemInHand().getTypeId());
+			}
+			else
+			{
+				wskill = SkillsProperties.getWeaponSkill(aplayer.getItemInHand().getTypeId());
+			}
+			
         	if(wskill < 1){
         		wskill = SkillsProperties.getWeaponSkill(399);
         		wdamage = SkillsProperties.getItemLevel(399, wskill);
         	}
-        	else{
+        	else
+        	{
         		wdamage = SkillsProperties.getItemLevel(aplayer.getItemInHand().getTypeId(), wskill);
         	}
+        	
         	int wlevel = SkillsPlayer.get(aplayer).getLevel(wskill);	
         	if(dplayer != null){
         		hit = wdamage * (1 + (wlevel * SkillsProperties.weaponMod));
@@ -178,6 +174,20 @@ public class SkillsEntityListener extends EntityListener {
 	    		event.setCancelled(false);
 	    	}
     	}
+    }
+    
+    public void onEntityDamageByProjectile(EntityDamageByProjectileEvent event) {
+    	if(!SkillsProperties.combatOn)
+    		return;
+    	
+    	doDamage(event);
+    }
+    
+    public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
+    	if(!SkillsProperties.combatOn)
+    		return;
+    	
+    	doDamage(event);
     }
     
     public void onEntityExplode(EntityExplodeEvent event) {

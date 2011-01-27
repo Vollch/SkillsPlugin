@@ -15,7 +15,11 @@ public class SkillsBlockListener extends BlockListener {
     	//this.plugin = plugin;
     }
 
-    public void onBlockDamage(BlockDamageEvent event) {  	
+    public void onBlockDamage(BlockDamageEvent event) {  
+    	if(event.isCancelled()){
+    		return;
+    	}
+    	
         if (event.getDamageLevel() == BlockDamageLevel.BROKEN && event.getPlayer() != null) {	
         	SkillsPlayer sp = SkillsPlayer.get(event.getPlayer());
     		int skillDestroy = SkillsProperties.getDestroySkill(event.getBlock().getTypeId());
@@ -72,6 +76,10 @@ public class SkillsBlockListener extends BlockListener {
     
    
     public void onBlockPlace(BlockPlaceEvent event) {
+    	if(event.isCancelled()){
+    		return;
+    	}
+    	
 		int skill = SkillsProperties.getCreateSkill(event.getBlockPlaced().getTypeId());
 		if(skill < 1){
 			return;

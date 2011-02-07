@@ -39,10 +39,12 @@ public class SkillsProperties {
 	
 	public static boolean debugOn;
 	public static boolean combatOn;
+	public static boolean explosionOn;
 	public static boolean levelDependentCreatyGain;
 	public static boolean levelDependentDestroyGain;
 	public static boolean levelDependentGatherGain;
 	public static boolean levelDependentDropGain;
+	public static boolean creatureCombatGain;
 	public static int toBroke;
 	public static int saveTimer;
 	public static double explosionDrop;
@@ -58,10 +60,12 @@ public class SkillsProperties {
 			propertiesFile.load();
 			debugOn = propertiesFile.getBoolean("debugOn", false);
 			combatOn = propertiesFile.getBoolean("combatOn", true);
+			explosionOn = propertiesFile.getBoolean("explosionOn", true);
 			levelDependentCreatyGain = propertiesFile.getBoolean("levelDependentCreateGain", false);
 			levelDependentDestroyGain = propertiesFile.getBoolean("levelDependentDestroyGain", false);
 			levelDependentGatherGain = propertiesFile.getBoolean("levelDependentGatherGain", false);
 			levelDependentDropGain = propertiesFile.getBoolean("levelDependentDropGain", false);
+			creatureCombatGain = propertiesFile.getBoolean("creatureCombatGain", true);
 			toBroke = propertiesFile.getInt("toBroke", 5);
 			saveTimer = propertiesFile.getInt("saveTimer", 60000);
 			explosionDrop = propertiesFile.getDouble("explosionDrop", 1);
@@ -237,11 +241,13 @@ public class SkillsProperties {
 		try {
 			propertiesFile.load();
 			propertiesFile.setString("debugOn", "false");
-			propertiesFile.setString("combatOn", "false");
+			propertiesFile.setString("combatOn", "true");
+			propertiesFile.setString("explosionOn", "true");
 			propertiesFile.setString("levelDependentCreateGain", "false");
 			propertiesFile.setString("levelDependentDestroyGain", "false");
 			propertiesFile.setString("levelDependentGatherGain", "false");
 			propertiesFile.setString("levelDependentDropGain", "false");
+			propertiesFile.setString("creatureCombatGain", "true");
 			propertiesFile.setString("toBroke", "3");
 			propertiesFile.setString("explosionDrop", "1");
 			propertiesFile.setString("saveTimer", "60000");

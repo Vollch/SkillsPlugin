@@ -50,9 +50,9 @@ public class Skills extends JavaPlugin {
         pm.registerEvent(Event.Type.BLOCK_DAMAGED, blockListener, Priority.Highest, this);
         pm.registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Highest, this);
         pm.registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Priority.Normal, this);
-        pm.registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Priority.Normal, this);       
-        pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.Normal, this);
-        pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_PROJECTILE, entityListener, Priority.Normal, this);
+        pm.registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Priority.Highest, this);       
+        pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.Highest, this);
+        pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_PROJECTILE, entityListener, Priority.Highest, this);
 
         PluginDescriptionFile pdfFile = this.getDescription();
         log.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");

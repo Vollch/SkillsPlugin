@@ -30,7 +30,8 @@ public class SkillsBlockListener extends BlockListener {
 	    			event.getPlayer().sendMessage("Skill - " + Integer.toString(sp.getLevel(skillDestroy)) + " Tool - " + Integer.toString(tool) + " Dura - " + Integer.toString(durability));
 	    		}
 	    		if(durability - (sp.getLevel(skillDestroy) + tool) > SkillsProperties.toBroke) {
-	    			event.getPlayer().sendMessage("This block is too hard for you!");
+	    			event.getPlayer().sendMessage("Too difficult for you to break!");
+	    			event.getPlayer().sendMessage("(Tip: Make sure you're using the right tool!)");
 	    			event.setCancelled(true);
 	    			return;
 	    		}

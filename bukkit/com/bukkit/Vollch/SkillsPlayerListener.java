@@ -31,8 +31,8 @@ public class SkillsPlayerListener extends PlayerListener {
 					}
 				}
 				if(skill > 0){
-					player.sendMessage(SkillsProperties.getSkillName(skill) + " is skill for:");
-					String sDestroy = "Gather: ";
+					player.sendMessage(SkillsProperties.getSkillName(skill) + " is ranked up by");
+					String sDestroy = "DESTROYING: ";
 					boolean bDestroy = false;
 					for(int i = 1; i < 100; i++){
 						if(SkillsProperties.getDestroySkill(i) == skill){
@@ -49,7 +49,7 @@ public class SkillsPlayerListener extends PlayerListener {
 					if(bDestroy){
 						player.sendMessage(sDestroy);
 					}
-					String sCreate = "Build: ";
+					String sCreate = "BUILDING: ";
 					boolean bCreate = false;
 					for(int i = 1; i < 100; i++){
 						if(SkillsProperties.getCreateSkill(i) == skill){
@@ -82,14 +82,20 @@ public class SkillsPlayerListener extends PlayerListener {
 			}
 			if(p != null){
 				SkillsPlayer sp = SkillsPlayer.get(p);
-				player.sendMessage(sp.getName() + " are:");
+				String skillsName;
+				if (p == player){
+					skillsName = "Your";
+				} else {
+					skillsName = sp.getName()+"'s";
+				}
+				player.sendMessage(skillsName + " skills:");
 				for(int skill = 1; skill < SkillsProperties.Skills.length; skill++) {
 					int level = sp.getLevel(skill);
 					if(level < 15){
-						player.sendMessage(SkillsProperties.getRangForLevel(level, skill) + " " + SkillsProperties.Skills[skill] + "; level - " + level + "; exp - " + sp.getExp(skill) + "(" + SkillsProperties.getExpForLevel(level + 1, skill) + ");");
+						player.sendMessage("§7"+SkillsProperties.getRangForLevel(level, skill) + " " + SkillsProperties.Skills[skill] + " §a(Lvl " + level + " - " + sp.getExp(skill) + "/" + SkillsProperties.getExpForLevel(level + 1, skill) + ")");
 					}
 					else{
-						player.sendMessage(SkillsProperties.getRangForLevel(level, skill) + " " + SkillsProperties.Skills[skill] + "; level - " + level + "; exp - " + sp.getExp(skill) + ";");
+						player.sendMessage("§7"+SkillsProperties.getRangForLevel(level, skill) + " " + SkillsProperties.Skills[skill] + " §a(Lvl " + level + " - MAX)");
 					}
 				}
 				return;

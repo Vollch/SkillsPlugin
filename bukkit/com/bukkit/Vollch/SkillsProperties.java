@@ -66,12 +66,12 @@ public class SkillsProperties {
 			levelDependentGatherGain = propertiesFile.getBoolean("levelDependentGatherGain", false);
 			levelDependentDropGain = propertiesFile.getBoolean("levelDependentDropGain", false);
 			creatureCombatGain = propertiesFile.getBoolean("creatureCombatGain", true);
-			toBroke = propertiesFile.getInt("toBroke", 5);
+			toBroke = propertiesFile.getInt("toBroke", 3);
 			saveTimer = propertiesFile.getInt("saveTimer", 60000);
 			explosionDrop = propertiesFile.getDouble("explosionDrop", 1);
 			weaponMod = propertiesFile.getDouble("weaponMod", 0.3);
 			armorMod = propertiesFile.getDouble("armorMod", 1);
-			monsterMod = propertiesFile.getDouble("monsterMod", 5);
+			monsterMod = propertiesFile.getDouble("monsterMod", 2);
 		
 			if(propertiesFile.containsKey("Custom")){
 				temp = propertiesFile.getString("Custom").split(",");
@@ -251,9 +251,12 @@ public class SkillsProperties {
 			propertiesFile.setString("toBroke", "3");
 			propertiesFile.setString("explosionDrop", "1");
 			propertiesFile.setString("saveTimer", "60000");
+			propertiesFile.setString("weaponMod", "0.3");
+			propertiesFile.setString("armorMod", "1");
+			propertiesFile.setString("monsterMod", "2");
 			propertiesFile.setString("Custom", "17,26,27,28,29,30,31,32,33,34,35,35");
 			propertiesFile.setString("Durability", "1-2,2-2,3-2,4-2,5-2,7-15,12-2,13-4,14-7,15-3,16-2,17-2,21-6,22-8,24-2,41-2,42-7,43-3,44-3,45-6,47-3,48-6,49-10,56-13,57-15,73-6,74-6,78-2,80-3,82-3,87-10,88-10,89-10");
-			propertiesFile.setString("SkillNames", "Miner,Mason,Woodcutter,Carpenter,Gemcutter,Metalcrafter,Hauler,Clother,Harvester");
+			propertiesFile.setString("SkillNames", "Miner,Mason,Woodcutter,Carpenter,Gemcutter,Metalcrafter,Hauler,Clother,Harvester,Hunter,Wrestler,Axeman,Swordsman,Bowman,Armoruser,Dodger");
 			propertiesFile.setString("BaseExp", "0,200,450,750,1100,1500,1950,2450,3000,3600,4250,4950,5700,6500,7350");
 			propertiesFile.setString("BaseRang", "Novice,Adequate,Competent,Skilled,Proficient,Talented,Adept,Expert,Professional,Accomplished,Great,Master,High Master,Grand Master,Legendary");
 			propertiesFile.setString("MinerDestroy", "1,4,7,24,43,44,45,48,49,67,87,89");
@@ -274,6 +277,14 @@ public class SkillsProperties {
 			propertiesFile.setString("ClotherDestroy", "26,27,28,29,30,31,32,33,34,35,36");
 			propertiesFile.setString("ClotherCreate", "26,27,28,29,30,31,32,33,34,35,36");
 			propertiesFile.setString("HarvesterGather", "18-5-0.03-18-0.03-260-0.01-323-0.003,37-37-0.2,38-38-0.2,39-39-0.2,40-40-0.2,59-296-0.3-295-0.1");
+			propertiesFile.setString("HunterDrop", "Pig-319-0.30,Sheep-35-0.30");
+			propertiesFile.setString("WrestlerWeapon", "399-2");
+			propertiesFile.setString("AxemanWeapon", "271-1,286-2,275-3,258-4,279-6");
+			propertiesFile.setString("SwordsmanWeapon", "268-2,283-3,272-4,267-5,276-7");
+			propertiesFile.setString("BowmanProjectile", "261-2");
+			propertiesFile.setString("ArmoruserArmor", "298-34-3,299-48-3,300-46-3,301-40-3,302-67-4,303-96-4,304-92-4,305-79-4,306-136-5,307-192-5,308-184-5,309-160-5,310-272-7,311-384-7,312-368-7,313-320-7,314-68-4,315-96-4,316-92-4,317-80-4");
+			propertiesFile.setString("DodgerDodge", "0.02,0.04,0.06,0.08,0.10,0.12,0.14,0.16,0.18,0.20,0.22,0.24,0.26,0.28,0.30");
+			propertiesFile.setString("DodgerExp", "0,30,120,300,570,950,1440,2050,2810,3720,4800,6050,7480,9120,10970");
 			propertiesFile.save();
 			return true;
 		}

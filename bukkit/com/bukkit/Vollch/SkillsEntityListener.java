@@ -8,6 +8,7 @@ import org.bukkit.Location;
 import org.bukkit.block.Block;
 import org.bukkit.block.BlockFace;
 import org.bukkit.craftbukkit.entity.CraftEntity;
+import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByProjectileEvent;
@@ -63,14 +64,16 @@ public class SkillsEntityListener extends EntityListener {
 			hit = event.getDamage() * SkillsProperties.monsterMod;
 		}
 		if(dplayer != null) {
-			double dodge = SkillsProperties.Dodge[SkillsPlayer.get(dplayer).getLevel((int) SkillsProperties.Dodge[0])];
-			if(dodge >= Math.random()) {
-				SkillsPlayer.get(dplayer).giveExp((int) SkillsProperties.Dodge[0], 1);
-				dplayer.sendMessage("You dodge enemy attack!");
-				if(aplayer != null) {
-					aplayer.sendMessage("Enemy dodged!");
+			if(SkillsProperties.Dodge != null){
+				double dodge = SkillsProperties.Dodge[SkillsPlayer.get(dplayer).getLevel((int) SkillsProperties.Dodge[0])];
+				if(dodge >= Math.random()) {
+					SkillsPlayer.get(dplayer).giveExp((int) SkillsProperties.Dodge[0], 1);
+					dplayer.sendMessage("You dodge enemy attack!");
+					if(aplayer != null) {
+						aplayer.sendMessage("Enemy dodged!");
+					}
+					return;
 				}
-				return;
 			}
 			Inventory inv = dplayer.getInventory();
 			for(int i = 36; i < 40; i++) {
@@ -141,15 +144,17 @@ public class SkillsEntityListener extends EntityListener {
 	}
 	
 	public void onEntityDamageByProjectile(EntityDamageByProjectileEvent event) {
-		if(!SkillsProperties.combatOn || event.isCancelled() || event.getEntity() == null)
-			return;
-		doDamage(event);
+		if(SkillsProperties.combatOn && !event.isCancelled() && event.getDamager() instanceof LivingEntity && event.getEntity() instanceof LivingEntity){
+			doDamage(event);
+		}
+		return;
 	}
 
 	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-		if(!SkillsProperties.combatOn || event.isCancelled() || event.getEntity() == null)
-			return;
-		doDamage(event);
+		if(SkillsProperties.combatOn && !event.isCancelled() && event.getDamager() instanceof LivingEntity && event.getEntity() instanceof LivingEntity){
+			doDamage(event);
+		}
+		return;
 	}
 
 	public void onEntityExplode(EntityExplodeEvent event) {

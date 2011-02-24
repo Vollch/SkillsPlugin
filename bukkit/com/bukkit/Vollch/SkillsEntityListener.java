@@ -12,6 +12,7 @@ import org.bukkit.entity.LivingEntity;
 import org.bukkit.entity.Player;
 import org.bukkit.event.entity.EntityDamageByEntityEvent;
 import org.bukkit.event.entity.EntityDamageByProjectileEvent;
+import org.bukkit.event.entity.EntityDamageEvent;
 import org.bukkit.event.entity.EntityExplodeEvent;
 import org.bukkit.event.entity.EntityListener;
 import org.bukkit.inventory.Inventory;
@@ -142,19 +143,14 @@ public class SkillsEntityListener extends EntityListener {
 			}
 		}
 	}
-	
-	public void onEntityDamageByProjectile(EntityDamageByProjectileEvent event) {
-		if(SkillsProperties.combatOn && !event.isCancelled() && event.getDamager() instanceof LivingEntity && event.getEntity() instanceof LivingEntity){
-			doDamage(event);
-		}
-		return;
-	}
 
-	public void onEntityDamageByEntity(EntityDamageByEntityEvent event) {
-		if(SkillsProperties.combatOn && !event.isCancelled() && event.getDamager() instanceof LivingEntity && event.getEntity() instanceof LivingEntity){
-			doDamage(event);
+	public void onEntityDamage(EntityDamageEvent event) {
+		if(event instanceof EntityDamageByEntityEvent) {
+			EntityDamageByEntityEvent sub = (EntityDamageByEntityEvent)event;
+			if(SkillsProperties.combatOn && !event.isCancelled() && sub.getDamager() instanceof LivingEntity && sub.getEntity() instanceof LivingEntity){
+		        doDamage(sub);
+			}
 		}
-		return;
 	}
 
 	public void onEntityExplode(EntityExplodeEvent event) {

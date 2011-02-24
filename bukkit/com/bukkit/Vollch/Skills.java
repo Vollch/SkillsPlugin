@@ -1,15 +1,11 @@
 package com.bukkit.Vollch;
 
-import java.io.File;
-import java.util.logging.Logger;
 import java.util.Timer;
 import java.util.TimerTask;
-
-import org.bukkit.Server;
+import java.util.logging.Logger;
 import org.bukkit.event.Event;
 import org.bukkit.event.Event.Priority;
 import org.bukkit.plugin.PluginDescriptionFile;
-import org.bukkit.plugin.PluginLoader;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 
@@ -25,10 +21,6 @@ public class Skills extends JavaPlugin {
 	private final SkillsEntityListener entityListener = new SkillsEntityListener(this);
     private final SkillsPlayerListener playerListener = new SkillsPlayerListener(this);
     private final SkillsBlockListener blockListener = new SkillsBlockListener(this);
-
-    public Skills(PluginLoader pluginLoader, Server instance, PluginDescriptionFile desc, File folder, File plugin, ClassLoader cLoader) {
-    	super(pluginLoader, instance, desc, folder, plugin, cLoader);
-    }
 
     public void onEnable() {
 		if(!SkillsProperties.loadConfig()){
@@ -51,8 +43,7 @@ public class Skills extends JavaPlugin {
         pm.registerEvent(Event.Type.BLOCK_PLACED, blockListener, Priority.Highest, this);
         pm.registerEvent(Event.Type.PLAYER_COMMAND, playerListener, Priority.Normal, this);
         pm.registerEvent(Event.Type.ENTITY_EXPLODE, entityListener, Priority.Highest, this);       
-        pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_ENTITY, entityListener, Priority.Highest, this);
-        pm.registerEvent(Event.Type.ENTITY_DAMAGEDBY_PROJECTILE, entityListener, Priority.Highest, this);
+        pm.registerEvent(Event.Type.ENTITY_DAMAGED, entityListener, Priority.Highest, this);
 
         PluginDescriptionFile pdfFile = this.getDescription();
         log.info(pdfFile.getName() + " version " + pdfFile.getVersion() + " is enabled!");
